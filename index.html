@@ -219,6 +219,26 @@ body.welcome-lock{overflow:hidden}
 .hero.hero-emergency .live .eyebrow{color:#e5c36f}
 .hero.hero-emergency .live .sub{color:#e6d3a6}
 .hero.hero-emergency .stats .stat strong:last-of-type{overflow-wrap:normal}
+
+/* Telegram connection gate — notification preferences remain visible but locked. */
+.tg-locked{position:relative;opacity:.62;filter:saturate(.4)}
+.tg-locked button{cursor:not-allowed!important}
+.tg-lock-mark{display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:9px;background:#343846;color:#f5c84c;margin-left:7px;vertical-align:middle;flex:none}
+.tg-lock-mark svg{width:14px;height:14px}
+.tg-locked .ios-switch{background:#414651!important;border-color:#505560!important}
+.tg-locked .ios-switch span{transform:translateX(0)!important}
+.tg-locked .notification-options button.chosen{background:#30343c!important;border-color:#4a505b!important;color:#a8aebb!important;box-shadow:none!important}
+.tg-connect-overlay{position:fixed;inset:0;z-index:10010;background:#05070cc9;display:flex;align-items:center;justify-content:center;padding:22px;backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+.tg-connect-overlay[hidden]{display:none!important}
+.tg-connect-card{width:min(100%,390px);border:1px solid #3b4251;border-radius:24px;background:linear-gradient(145deg,#222632,#171a23);padding:26px 22px;box-shadow:0 25px 80px #0009;text-align:center}
+.tg-connect-symbol{margin:0 auto 16px;width:56px;height:56px;display:grid;place-items:center;border-radius:18px;background:#423922;color:#f5c84c}
+.tg-connect-symbol svg{width:27px;height:27px}
+.tg-connect-card h2{font-size:21px;line-height:1.25;margin:0 0 10px;color:#fff}
+.tg-connect-card p{font-size:13px;line-height:1.6;color:#b4bbc9;margin:0 0 22px}
+.tg-connect-actions{display:grid;gap:10px}
+.tg-connect-actions button{width:100%;min-height:46px;border-radius:13px;font-size:14px;font-weight:750}
+.tg-connect-primary{background:#f5c84c!important;color:#18191d!important;border:0}
+.tg-connect-later{background:#303440!important;color:#d4d8e1!important;border:1px solid #414757}
 </style></head><body><div id="welcomeIntro" class="welcome-intro" role="presentation" aria-hidden="true"><div class="welcome-content"><div class="welcome-brand"><div class="welcome-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-9 12h7l-1 8 10-12h-7V2Z"/></svg></div><span>Світло <span style="color:#f5c84c">UA</span></span></div><div class="welcome-kicker">ВАШ ПРОСТІР. ВАШ КОНТРОЛЬ.</div><h2>Світло під<br>контролем<span style="color:#f5c84c">.</span></h2><p>Усе важливе про відключення — в одному місці.</p></div></div><main class="app"><header class="top"><div class="brand"><div class="mark" data-icon="bolt"></div><span>Світло <span style="color:var(--yellow)">UA</span></span></div><button type="button" class="avatar settings-trigger" id="openSettings" aria-label="Налаштування" data-icon="settings"></button></header><section id="home" class="screen"><div class="eyebrow">ВАШ ПРОСТІР. ВАШ КОНТРОЛЬ.</div><h1>Світло під<br>контролем<span style="color:var(--yellow)">.</span></h1><p class="sub">Усе важливе про відключення — в одному місці.</p><div class="quick-head"><span>ШВИДКИЙ ВИБІР АДРЕСИ</span><span id="quickCounter"></span></div><div id="quickAddresses" class="quick-addresses" aria-label="Швидке перемикання адрес"></div><button type="button" class="manage-addresses" id="manageAddresses"><span data-icon="sliders"></span> Керувати адресами <span data-icon="arrow-right"></span></button><article class="hero"><button class="address-button" id="addressPicker"><div><div class="eyebrow" id="heroAddressLabel">ОБРАНА АДРЕСА</div><div class="address-title" id="currentAddress">Додайте адресу</div><div class="sub" style="font-size:12px">Додайте адресу, щоб побачити графік ДТЕК</div></div><span class="hero-address-settings" data-icon="settings" aria-hidden="true"></span></button><div class="divider"></div><div class="live"><div class="power" data-icon="power"></div><div><div class="eyebrow">ЗАРАЗ ЗА ГРАФІКОМ</div><div class="status">Світло є</div><div class="sub" style="font-size:12px">До відключення: 2 год 15 хв</div></div></div><div class="stats"><div class="stat"><div class="stathead"><span data-icon="clock"></span>Наступне вимкнення</div><strong>18:00</strong><div class="sub" style="font-size:11px">Сьогодні</div></div><div class="stat"><div class="stathead"><span data-icon="moon"></span>Без світла за добу</div><strong>5 год</strong><div class="sub" style="font-size:11px">За планом</div></div></div></article><div class="section-title"><h2>Графік відключень</h2><span class="sub">24 години</span></div><article class="schedule"><div class="days"><button class="day active" data-day="0">Сьогодні</button><button class="day" data-day="1">Завтра</button><button class="day" data-day="2">Післязавтра</button></div><div class="chart" id="chart"></div><div class="axis"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div><div class="legend"><span><i class="dot" style="background:var(--green)"></i>Є світло</span><span><i class="dot" style="background:var(--red)"></i>Немає</span><span><i class="dot" style="background:var(--yellow)"></i>Можливо</span><span><i class="dot" style="background:#4b505c"></i>Немає даних</span></div><div class="note"><span data-icon="info"></span><span id="dayNote">Додайте адресу з довідника ДТЕК, щоб побачити графік.</span></div></article><div class="footnote">Дані графіка надходять від ДТЕК. Фактичний стан електропостачання може відрізнятися від планового.</div></section><section id="addresses" class="screen hidden"><div class="eyebrow">КЕРУВАННЯ ЛОКАЦІЯМИ</div><h1>Мої адреси<span style="color:var(--yellow)">.</span></h1><p class="sub">Зберігайте важливі місця та швидко переглядайте графіки.</p><div id="addressList" style="margin-top:26px"></div><button class="primary" id="addBtn"><span data-icon="plus"></span>Додати адресу</button><div class="form hidden" id="addForm"><label for="newAddr">Вулиця та номер будинку</label><input id="newAddr" placeholder="Наприклад, просп. Дмитра Яворницького, 1" maxlength="120"><button class="primary" id="saveAddr">Зберегти адресу</button><button class="softbtn" id="cancelAdd" style="width:100%">Скасувати</button></div><p class="footnote">Адреси зберігаються у цьому браузері. Експортуйте їх у налаштуваннях, щоб мати резервну копію.</p></section><section id="help" class="screen hidden"><div class="eyebrow">ЗАВЖДИ ПОРУЧ</div><h1>Допомога<span style="color:var(--yellow)">.</span></h1><p class="sub">Коротко про те, як працює Світло UA.</p><article class="help-card"><div class="help-icon" data-icon="help-circle"></div><h2 style="margin-top:19px">Як користуватися?</h2><p>Додайте адресу в розділі «Мої адреси». Оберіть її, щоб побачити інформацію на головному екрані.</p><p>Графіки завантажуються з ДТЕК через наш сервер. Сповіщення надходять у Telegram після підключення бота.</p></article><article class="help-card"><div class="row"><h2>Про застосунок</h2><span class="tag">WEB</span></div><p>Світло UA — незалежний вебзастосунок для перегляду планових графіків ДТЕК за обраною адресою.</p></article></section><section id="settings" class="screen hidden"><div class="eyebrow">ПЕРСОНАЛІЗАЦІЯ</div><h1>Налаштування<span style="color:var(--yellow)">.</span></h1><p class="sub">Налаштуйте застосунок під себе.</p><article class="settings-panel"><div class="settings-row"><div class="settings-icon" data-icon="volume"></div><div class="settings-copy"><strong>Звуки інтерфейсу</strong><small>Легкі звуки під час взаємодії</small></div><button type="button" id="soundToggle" class="ios-switch" role="switch" aria-label="Звуки інтерфейсу" aria-checked="true"><span></span></button></div><div class="volume-control" id="volumeControl"><div class="volume-head"><label for="soundVolume">Гучність звуків</label><strong id="soundVolumeValue">100%</strong></div><div class="volume-slider-wrap"><input id="soundVolume" type="range" min="50" max="150" step="1" value="100" aria-label="Гучність звуків"><span class="volume-center-mark" aria-hidden="true"></span></div><div class="volume-labels"><span>50%</span><span>100% · стандарт</span><span>150%</span></div></div></article><article class="settings-panel notification-panel" aria-label="Налаштування сповіщень">
 <div class="notification-heading"><span class="notification-heading-icon" data-icon="bell"></span><div><strong>Сповіщення про світло</strong><small>Налаштуйте, коли отримувати повідомлення</small></div></div>
 <div class="notification-delay"><div class="notification-label">Попереджати перед відключенням</div><div class="notification-options" role="group" aria-label="Час попередження"><button type="button" data-reminder="15">15 хв</button><button type="button" data-reminder="30">30 хв</button><button type="button" data-reminder="60">1 год</button><button type="button" data-reminder="0">Ні</button></div></div>
@@ -580,15 +600,16 @@ if(!button||!check||!label)return;
 const token=()=>localStorage.getItem(TOKEN_KEY)||'';
 const auth=()=>({'Authorization':'Bearer '+token()});
 function status(message){label.textContent=message;}
+function publishLinkState(state){window.dispatchEvent(new CustomEvent('svitlo:telegram-link-state',{detail:{state}}));}
 async function checkLink(){
- if(!token()){status('Не підключено');return false;}
+ if(!token()){status('Не підключено');publishLinkState('unlinked');return false;}
  try{
   const r=await fetch(API+'/api/link/status',{headers:auth()});
   if(!r.ok)throw Error('HTTP '+r.status);
   const d=await r.json();
-  if(d.linked){status('Підключено ✓');button.textContent='Перепідключити Telegram';await sync();return true;}
-  status('Очікуємо підтвердження в боті');return false;
- }catch(e){status('Помилка зв’язку з сервером');return false;}
+  if(d.linked){publishLinkState('linked');status('Підключено ✓');button.textContent='Перепідключити Telegram';await sync();return true;}
+  publishLinkState('pending');status('Очікуємо підтвердження в боті');return false;
+ }catch(e){publishLinkState('unknown');status('Помилка зв’язку з сервером');return false;}
 }
 async function sync(){
  if(!token())return false;
@@ -616,10 +637,42 @@ button.addEventListener('click',async()=>{
  }catch(e){status('Сервер недоступний: '+e.message);}
 });
 check.addEventListener('click',checkLink);
+window.addEventListener('focus',()=>{if(token())checkLink()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&token())checkLink()});
 // Updates address list/preferences on the server after local changes.
 window.addEventListener('storage',e=>{if(e.key==='svitlo_workspace_v2')sync()});
 window.addEventListener('svitlo:workspace-updated',()=>{sync()});
 checkLink();
+})();
+</script>
+<script>
+/* Notification controls require a verified Telegram connection. */
+(()=>{
+ const ids=['addressNotifyToggle','notifyToggle','scheduleNotifyToggle','quietToggle'];
+ const controls=ids.map(id=>document.getElementById(id)).filter(Boolean);
+ const reminderButtons=[...document.querySelectorAll('[data-reminder]')];
+ const targets=[...controls,...reminderButtons];
+ const overlay=document.createElement('div');overlay.className='tg-connect-overlay';overlay.hidden=true;
+ overlay.innerHTML=`<div class="tg-connect-card" role="dialog" aria-modal="true" aria-labelledby="tgConnectTitle"><div class="tg-connect-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></div><h2 id="tgConnectTitle">Підключіть Telegram 🔔</h2><p>Щоб отримувати сповіщення про відключення, увімкнення світла та нові графіки, підключіть Telegram-бота. Перегляд графіків працює і без нього.</p><div class="tg-connect-actions"><button type="button" class="tg-connect-primary" id="tgGoConnect">Підключити Telegram</button><button type="button" class="tg-connect-later" id="tgConnectLater">Пізніше</button></div></div>`;
+ document.body.append(overlay);
+ let state='unknown',introReady=false,seen=false;
+ const lockIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>';
+ for(const el of controls){const row=el.closest('.notification-line,.address-preference-row');if(row){const mark=document.createElement('span');mark.className='tg-lock-mark';mark.innerHTML=lockIcon;mark.title='Потрібно підключити Telegram';const text=row.querySelector('.notification-line-text strong,.address-preference-copy strong');if(text)text.append(mark);}}
+ const reminder=document.querySelector('.notification-delay');
+ if(reminder){const mark=document.createElement('span');mark.className='tg-lock-mark';mark.innerHTML=lockIcon;mark.title='Потрібно підключити Telegram';reminder.querySelector('.notification-label')?.append(mark);}
+ function update(){const locked=state!=='linked';for(const el of targets){el.disabled=locked;el.setAttribute('aria-disabled',String(locked));el.title=locked?'Підключіть Telegram, щоб налаштувати сповіщення':'';}
+ for(const row of document.querySelectorAll('.notification-line,.address-preference-row')){if(row.querySelector('#addressNotifyToggle,#notifyToggle,#scheduleNotifyToggle,#quietToggle'))row.classList.toggle('tg-locked',locked);}
+ reminder?.classList.toggle('tg-locked',locked);
+ document.querySelectorAll('.tg-lock-mark').forEach(el=>el.hidden=!locked);
+ if(!locked)overlay.hidden=true;
+ }
+ function maybePrompt(){if(!introReady||seen||sessionStorage.getItem('svitlo_tg_prompt_dismissed')==='1')return;if(state==='unlinked'||state==='pending'){seen=true;overlay.hidden=false;}}
+ window.addEventListener('svitlo:telegram-link-state',e=>{state=e.detail.state;update();maybePrompt()});
+ document.getElementById('tgConnectLater').onclick=()=>{overlay.hidden=true;sessionStorage.setItem('svitlo_tg_prompt_dismissed','1')};
+ document.getElementById('tgGoConnect').onclick=()=>{overlay.hidden=true;sessionStorage.setItem('svitlo_tg_prompt_dismissed','1');const settings=document.querySelector('.nav button[data-tab="settings"]');settings?.click();requestAnimationFrame(()=>setTimeout(()=>document.getElementById('telegramLinkPanel')?.scrollIntoView({behavior:'smooth',block:'center'}),180));};
+ // Intro animation lasts a few seconds; never interrupt it with the prompt.
+ setTimeout(()=>{introReady=true;maybePrompt()},3700);
+ update();
 })();
 </script>
 <script>
