@@ -336,7 +336,7 @@ const categoryIcon=a=>a?.kind==='Робота'?'briefcase':a?.kind==='Школа
 function renderQuick(){const root=$('quickAddresses');if(!root)return;root.replaceChildren();const current=active();$('quickCounter').textContent=store.addresses.length?`${store.addresses.findIndex(a=>a.id===activeId)+1} / ${store.addresses.length}`:'';for(const a of store.addresses){const theme=palette(a),b=document.createElement('button');b.type='button';b.className='quick-chip'+(a.id===activeId?' current':'');b.style.setProperty('--chip-a',theme.a);b.style.setProperty('--chip-b',theme.b);b.style.setProperty('--chip-accent',theme.accent);b.setAttribute('aria-pressed',String(a.id===activeId));const emblem=document.createElement('span');emblem.className='quick-emblem';emblem.innerHTML=icon(categoryIcon(a));const copy=document.createElement('span');copy.className='quick-copy';const kind=document.createElement('small');kind.textContent=a.kind||'Дім';const primaryMark=document.createElement('span');primaryMark.className='quick-primary-mark'+(a.id===store.primary?' is-primary':'');primaryMark.textContent=a.id===store.primary?'★':'☆';primaryMark.title=a.id===store.primary?'Основна адреса':'Не основна адреса';primaryMark.setAttribute('aria-label',primaryMark.title);const kindLine=document.createElement('span');kindLine.className='quick-kind-line';kindLine.append(kind,primaryMark);if(a.notificationsEnabled===false){const mute=document.createElement('span');mute.className='quick-mute';mute.innerHTML=icon('bell-off');mute.title='Сповіщення вимкнено для цієї адреси';mute.setAttribute('aria-label',mute.title);kindLine.append(mute)}const name=document.createElement('strong');name.textContent=[a.street,a.house].filter(Boolean).join(', ')||title(a);copy.append(kindLine,name);b.append(emblem,copy);b.onclick=()=>{if(activeId===a.id)return;activeId=a.id;renderHome();b.scrollIntoView({behavior:store.motion?'instant':'smooth',inline:'center',block:'nearest'})};root.append(b)}if(!store.addresses.length){const empty=document.createElement('button');empty.type='button';empty.className='quick-empty';empty.textContent='+ Додати першу адресу';empty.onclick=()=>showScreen('addAddress');root.append(empty)}}
 const title=a=>[a.city,a.street,a.house].filter(Boolean).join(', ');
 const notice=t=>{let e=$('uiToast');if(!e){e=document.createElement('div');e.id='uiToast';e.className='toast';document.body.append(e)}e.textContent=t;e.classList.add('visible');clearTimeout(notice.t);notice.t=setTimeout(()=>e.classList.remove('visible'),2100)};
-const showScreen=tab=>{document.querySelectorAll('main section').forEach(e=>e.classList.toggle('hidden',e.id!==tab));document.querySelectorAll('.nav button').forEach(e=>e.classList.toggle('active',e.dataset.tab===(['detail','category','addAddress'].includes(tab)?'addresses':tab)));if(tab==='addresses')renderList();if(tab==='home'){renderHome();const hero=document.querySelector('#home .hero');if(hero){hero.classList.remove('return-focus');void hero.offsetWidth;hero.classList.add('return-focus');}}if(tab==='home'){requestAnimationFrame(()=>requestAnimationFrame(()=>{window.scrollTo({top:0,behavior:'instant'});}));}else{window.scrollTo({top:0,behavior:'instant'});}};
+const showScreen=tab=>{document.querySelectorAll('main section').forEach(e=>e.classList.toggle('hidden',e.id!==tab));document.querySelectorAll('.nav button').forEach(e=>e.classList.toggle('active',e.dataset.tab===(['detail','category','addAddress'].includes(tab)?'addresses':tab)));if(tab==='addresses')renderList();if(tab==='home'){renderHome();const hero=document.querySelector('#home .hero');if(hero){hero.classList.remove('return-focus');void hero.offsetWidth;hero.classList.add('return-focus');}}if(tab==='home'){requestAnimationFrame(()=>requestAnimationFrame(()=>{window.svitloAlignHome?.('instant');}));}else{window.scrollTo({top:0,behavior:'instant'});}};
 // Replace old prototype navigation and address handlers.
 window.show=showScreen;
 window.renderAddresses=renderList;
@@ -539,6 +539,17 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){const a=a
 renderHome();renderList();drawDay(0);persist();
 })();
 </script><style>.reduced-ui-motion *, .reduced-ui-motion *::before,.reduced-ui-motion *::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}</style><script>
+/* One shared home camera position for startup and every return to Home. */
+window.svitloAlignHome=function(behavior='instant'){
+ const home=document.getElementById('home');
+ if(!home||home.classList.contains('hidden'))return;
+ const heading=home.querySelector('h1');
+ if(!heading)return;
+ // Place the heading just below Telegram's top overlay; quick address cards stay visible.
+ const topInset=window.innerWidth<=700?68:24;
+ const top=Math.max(0,window.scrollY+heading.getBoundingClientRect().top-topInset);
+ window.scrollTo({top,behavior});
+};
 /* Opening animation: hero takes the full viewport, then gently reveals the address selector. */
 (()=>{
  const splash=document.getElementById('welcomeIntro');
@@ -549,8 +560,7 @@ renderHome();renderList();drawDay(0);persist();
  function finish(){if(done)return;done=true;splash.classList.add('leaving');document.body.classList.remove('welcome-lock');
   const home=document.getElementById('home');
   if(home&&!home.classList.contains('hidden')){
-   const target=home.querySelector('.quick-head');
-   if(target){const top=Math.max(0,target.getBoundingClientRect().top+window.scrollY-22);window.scrollTo({top,behavior:reduced?'instant':'smooth'});}
+   window.svitloAlignHome?.(reduced?'instant':'smooth');
   }
   setTimeout(()=>splash.remove(),reduced?40:620);
  }
