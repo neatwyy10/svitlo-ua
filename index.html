@@ -603,7 +603,7 @@ window.svitloAlignHome=function(behavior='instant'){
   if(home&&!home.classList.contains('hidden')){
    window.svitloAlignHome?.(reduced?'instant':'smooth');
   }
-  setTimeout(()=>splash.remove(),reduced?40:620);
+  setTimeout(()=>{splash.remove();window.svitloIntroFinished=true;window.dispatchEvent(new Event('svitlo:intro-finished'));},reduced?40:620);
  }
  const delay=reduced?90:1700;
  setTimeout(finish,delay);
@@ -831,15 +831,22 @@ checkLink();
  document.getElementById('startShortTour')?.addEventListener('click',()=>begin(true,'short'));
  document.getElementById('startQuickTour')?.addEventListener('click',()=>begin(true,'quick'));
  window.startSvitloTour=(chosenMode='full')=>begin(true,chosenMode);
+ let trainingPromptHandled=false;
  function showFirstLaunchChoice(){
-  if(localStorage.getItem(TOUR_KEY)==='1'||started||document.querySelector('.tour-welcome'))return;
+  if(!introFinished||trainingPromptHandled||linkState!=='unlinked'||started||document.querySelector('.tour-welcome'))return;
+  trainingPromptHandled=true;
   const overlay=document.createElement('div');overlay.className='tour-welcome';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Оберіть навчання');
-  overlay.innerHTML=`<div class="tour-welcome-card"><div class="tour-welcome-symbol">⚡</div><h2>Вітаємо у Світло UA!</h2><p>Давайте познайомимося із застосунком. Оберіть, наскільки детально хочете пройти навчання.</p><div class="tour-welcome-choices"><button type="button" data-mode="quick"><strong>⚡ Швидке навчання · 4 кроки</strong><small>Найважливіше за хвилину</small></button><button type="button" data-mode="short"><strong>✨ Коротке навчання · 8 кроків</strong><small>Основні функції застосунку</small></button><button type="button" data-mode="full"><strong>🎓 Повне навчання · 17 кроків</strong><small>Детальне знайомство з усіма можливостями</small></button></div><button class="tour-welcome-skip" type="button">Пропустити навчання</button></div>`;
-  overlay.querySelectorAll('[data-mode]').forEach(button=>button.addEventListener('click',()=>{const selected=button.dataset.mode;overlay.remove();begin(false,selected);}));
+  overlay.innerHTML=`<div class="tour-welcome-card"><div class="tour-welcome-symbol">⚡</div><h2>Вітаємо у Світло UA!</h2><p>Ваш Telegram ще не прив’язаний. Пройдіть невелике навчання, щоб дізнатися про можливості застосунку та підключити сповіщення наприкінці.</p><div class="tour-welcome-choices"><button type="button" data-mode="quick"><strong>⚡ Швидке навчання · 4 кроки</strong><small>Найважливіше за хвилину</small></button><button type="button" data-mode="short"><strong>✨ Коротке навчання · 8 кроків</strong><small>Основні функції застосунку</small></button><button type="button" data-mode="full"><strong>🎓 Повне навчання · 17 кроків</strong><small>Детальне знайомство з усіма можливостями</small></button></div><button class="tour-welcome-skip" type="button">Пропустити навчання</button></div>`;
+  overlay.querySelectorAll('[data-mode]').forEach(button=>button.addEventListener('click',()=>{const selected=button.dataset.mode;overlay.remove();begin(true,selected);}));
   overlay.querySelector('.tour-welcome-skip').addEventListener('click',()=>{overlay.remove();localStorage.setItem(TOUR_KEY,'1');});
   document.body.append(overlay);
  }
- setTimeout(showFirstLaunchChoice,3900);
+ // Offer training on each new site visit if the backend confirms Telegram is not linked.
+ // Never interrupt a linked user, and do not repeat after dismissal during this page visit.
+ let introFinished=!!window.svitloIntroFinished;
+ if(introFinished)showFirstLaunchChoice();
+ window.addEventListener('svitlo:intro-finished',()=>{introFinished=true;showFirstLaunchChoice();});
+ window.addEventListener('svitlo:telegram-link-state',()=>{if(introFinished)showFirstLaunchChoice();});
 })();
 </script>
 <script>
