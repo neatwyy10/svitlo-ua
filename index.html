@@ -153,7 +153,7 @@ body.welcome-lock{overflow:hidden}
 <div class="notification-line"><div class="notification-line-icon" data-icon="calendar-clock"></div><div class="notification-line-text"><strong>Новий графік</strong><small>Коли графік опублікують або змінять</small></div><button type="button" id="scheduleNotifyToggle" class="ios-switch" role="switch" aria-label="Новий графік" aria-checked="false"><span></span></button></div>
 <div class="notification-line last"><div class="notification-line-icon" data-icon="moon"></div><div class="notification-line-text"><strong>Вночі без звуку</strong><small>З 22:00 до 07:00 — тихі сповіщення</small></div><button type="button" id="quietToggle" class="ios-switch" role="switch" aria-label="Вночі без звуку" aria-checked="false"><span></span></button></div>
 <p class="notification-disclaimer">Ці параметри поки зберігаються лише у браузері. Надсилання сповіщень підключимо окремо.</p>
-</article><article class="settings-panel" style="margin-top:14px"><div class="switch-row"><div><strong>Зменшити анімації</strong><small>Менше руху під час переходів</small></div><button type="button" id="motionToggle" class="ios-switch" role="switch" aria-checked="false"><span></span></button></div></article><article class="settings-panel" style="margin-top:14px"><button class="setting-action" id="exportData"><span data-icon="download"></span>Експортувати мої адреси</button></article><p class="micro">Налаштування сповіщень зберігаються локально. Поки вони не запускають надсилання повідомлень.</p><p class="footnote">Звуки ввімкнено за замовчуванням. Їх можна вимкнути тут у будь-який момент. На деяких пристроях звук почне відтворюватися після першого натискання.</p><button type="button" class="softbtn" id="backSettings" style="width:100%;margin-top:24px">Повернутися назад</button></section><section id="detail" class="screen hidden"><div class="eyebrow">ІНФОРМАЦІЯ ПРО АДРЕСУ</div><h1>Моя адреса<span style="color:var(--yellow)">.</span></h1><p class="sub" id="detailAddress">Оберіть адресу</p><div class="info-panel detail-premium" id="detailInfo"></div><div class="section-heading">Прогноз на три дні</div><div class="forecast-list" id="detailForecast"></div><button type="button" id="jumpActions" class="jump-actions" aria-label="Перейти до керування адресою"><span data-icon="sliders"></span><span>Керування адресою</span><span data-icon="chevron-down"></span></button><div class="address-preferences" id="detailActions">
+</article><article class="settings-panel" id="telegramLinkPanel" style="margin-top:14px"><div class="settings-row"><div class="settings-icon" data-icon="bell"></div><div class="settings-copy"><strong>Telegram-сповіщення</strong><small id="telegramLinkStatus">Не підключено</small></div></div><button type="button" class="primary" id="telegramLinkBtn">Підключити Telegram</button><button type="button" class="secondary-button" id="telegramCheckBtn" style="margin-top:9px">Перевірити підключення</button><p class="micro">Сайт працює без Telegram. Після підключення бот сповіщатиме про зміни графіка ДТЕК за вибраними адресами.</p></article><article class="settings-panel" style="margin-top:14px"><div class="switch-row"><div><strong>Зменшити анімації</strong><small>Менше руху під час переходів</small></div><button type="button" id="motionToggle" class="ios-switch" role="switch" aria-checked="false"><span></span></button></div></article><article class="settings-panel" style="margin-top:14px"><button class="setting-action" id="exportData"><span data-icon="download"></span>Експортувати мої адреси</button></article><p class="micro">Налаштування сповіщень зберігаються локально. Поки вони не запускають надсилання повідомлень.</p><p class="footnote">Звуки ввімкнено за замовчуванням. Їх можна вимкнути тут у будь-який момент. На деяких пристроях звук почне відтворюватися після першого натискання.</p><button type="button" class="softbtn" id="backSettings" style="width:100%;margin-top:24px">Повернутися назад</button></section><section id="detail" class="screen hidden"><div class="eyebrow">ІНФОРМАЦІЯ ПРО АДРЕСУ</div><h1>Моя адреса<span style="color:var(--yellow)">.</span></h1><p class="sub" id="detailAddress">Оберіть адресу</p><div class="info-panel detail-premium" id="detailInfo"></div><div class="section-heading">Прогноз на три дні</div><div class="forecast-list" id="detailForecast"></div><button type="button" id="jumpActions" class="jump-actions" aria-label="Перейти до керування адресою"><span data-icon="sliders"></span><span>Керування адресою</span><span data-icon="chevron-down"></span></button><div class="address-preferences" id="detailActions">
 <div class="address-preference-row"><div class="address-preference-icon" data-icon="bell"></div><div class="address-preference-copy"><strong>Сповіщення для цієї адреси</strong><small>Збережеться для цієї адреси</small></div><button type="button" id="addressNotifyToggle" class="ios-switch" role="switch" aria-label="Сповіщення для цієї адреси" aria-checked="true"><span></span></button></div>
 <div class="address-preference-row"><div class="address-preference-icon" data-icon="star"></div><div class="address-preference-copy"><strong id="primaryText">Основна адреса</strong><small>Використовувати за замовчуванням</small></div><button type="button" id="detailPrimary" class="ios-switch" role="switch" aria-label="Основна адреса" aria-checked="false"><span></span></button></div>
 </div><div class="action-list"><button id="detailCategory"><span data-icon="tag"></span>Тип адреси</button><button id="detailDelete" class="danger"><span data-icon="trash-2"></span>Видалити адресу</button><button id="detailBack"><span data-icon="arrow-left"></span>На головну</button></div><p class="micro">Інформація про електропостачання — за графіком ДТЕК, а не фактичним вимірюванням. Графік плановий; фактичний стан електропостачання може відрізнятися.</p></section>
@@ -225,7 +225,7 @@ if(!store||!Array.isArray(store.addresses)){
 store.addresses=store.addresses.filter(a=>a&&typeof a.id==='string').slice(0,80);
 let activeId=store.primary||store.addresses[0]?.id||null;
 let dayIndex=0;
-const persist=()=>{localStorage.setItem(KEY,JSON.stringify(store));};
+const persist=()=>{localStorage.setItem(KEY,JSON.stringify(store));window.dispatchEvent(new Event('svitlo:workspace-updated'));};
 const active=()=>store.addresses.find(a=>a.id===activeId);
 const palettes=[{a:"#283b51",b:"#111c2b",accent:"#8fc6ff",icon:"#c2e2ff"},{a:"#3b2d49",b:"#20182c",accent:"#d6a8ff",icon:"#e9d2ff"},{a:"#23453d",b:"#102a27",accent:"#8ee2c6",icon:"#c7ffec"},{a:"#4b342d",b:"#2a1b1b",accent:"#ffbb91",icon:"#ffe0c9"},{a:"#454027",b:"#292618",accent:"#f5d982",icon:"#fff0b8"},{a:"#293f48",b:"#15272d",accent:"#8dd5e9",icon:"#c9f3ff"}];
 const palette=a=>{if(!a)return palettes[0];let hash=0;for(const c of a.id)hash=((hash*31)+c.charCodeAt(0))>>>0;return palettes[hash%palettes.length]};
@@ -420,5 +420,54 @@ renderHome();renderList();drawDay(0);persist();
  const delay=reduced?90:700;
  setTimeout(finish,delay);
  splash.addEventListener('pointerdown',finish,{once:true});
+})();
+</script><script>
+/* Telegram link: no bot token or Telegram SDK on the website. */
+(()=>{
+const API='https://svitlo.fadehost.app';
+const TOKEN_KEY='svitlo_telegram_link_token';
+const $=id=>document.getElementById(id);
+const button=$('telegramLinkBtn'),check=$('telegramCheckBtn'),label=$('telegramLinkStatus');
+if(!button||!check||!label)return;
+const token=()=>localStorage.getItem(TOKEN_KEY)||'';
+const auth=()=>({'Authorization':'Bearer '+token()});
+function status(message){label.textContent=message;}
+async function checkLink(){
+ if(!token()){status('Не підключено');return false;}
+ try{
+  const r=await fetch(API+'/api/link/status',{headers:auth()});
+  if(!r.ok)throw Error('HTTP '+r.status);
+  const d=await r.json();
+  if(d.linked){status('Підключено ✓');button.textContent='Перепідключити Telegram';await sync();return true;}
+  status('Очікуємо підтвердження в боті');return false;
+ }catch(e){status('Помилка зв’язку з сервером');return false;}
+}
+async function sync(){
+ if(!token())return;
+ let s;try{s=JSON.parse(localStorage.getItem('svitlo_workspace_v2')||'{}')}catch{return}
+ const addresses=(s.addresses||[]).filter(a=>a.city&&a.street&&a.house).map(a=>({
+  id:a.id,city:a.city,street:a.street,house:a.house,
+  enabled:a.notificationsEnabled!==false && s.notifications===true
+ }));
+ try{
+  const r=await fetch(API+'/api/link/sync',{method:'POST',headers:{...auth(),'Content-Type':'application/json'},body:JSON.stringify({addresses})});
+  if(!r.ok)throw Error('HTTP '+r.status);
+ }catch(e){status('Не вдалося синхронізувати адреси');}
+}
+button.addEventListener('click',async()=>{
+ try{
+  status('Створюємо посилання…');
+  const r=await fetch(API+'/api/link/start',{method:'POST'});
+  if(!r.ok)throw Error('HTTP '+r.status);
+  const d=await r.json();localStorage.setItem(TOKEN_KEY,d.token);
+  status('Відкрийте бота та натисніть Start');
+  window.open(d.url,'_blank','noopener,noreferrer');
+ }catch(e){status('Сервер недоступний: '+e.message);}
+});
+check.addEventListener('click',checkLink);
+// Updates address list/preferences on the server after local changes.
+window.addEventListener('storage',e=>{if(e.key==='svitlo_workspace_v2')sync()});
+window.addEventListener('svitlo:workspace-updated',()=>{sync()});
+checkLink();
 })();
 </script></body></html>
