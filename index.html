@@ -368,6 +368,8 @@ store.addresses=store.addresses.filter(a=>a&&typeof a.id==='string').slice(0,80)
 let activeId=store.primary||store.addresses[0]?.id||null;
 let dayIndex=0;
 const persist=()=>{localStorage.setItem(KEY,JSON.stringify(store));window.dispatchEvent(new Event('svitlo:workspace-updated'));};
+window.svitloGetWorkspace=()=>JSON.parse(JSON.stringify(store));
+window.svitloApplyWorkspace=(next)=>{if(!next||!Array.isArray(next.addresses))return;store={...store,...next};activeId=store.addresses.some(a=>a.id===activeId)?activeId:(store.primary||store.addresses[0]?.id||null);localStorage.setItem(KEY,JSON.stringify(store));renderHome();renderList();refreshNotifyPrefs();syncSwitch(mt,store.motion);applyMotion();if(!document.getElementById('detail').classList.contains('hidden'))renderDetail();};
 const active=()=>store.addresses.find(a=>a.id===activeId);
 const palettes=[{a:"#283b51",b:"#111c2b",accent:"#8fc6ff",icon:"#c2e2ff"},{a:"#3b2d49",b:"#20182c",accent:"#d6a8ff",icon:"#e9d2ff"},{a:"#23453d",b:"#102a27",accent:"#8ee2c6",icon:"#c7ffec"},{a:"#4b342d",b:"#2a1b1b",accent:"#ffbb91",icon:"#ffe0c9"},{a:"#454027",b:"#292618",accent:"#f5d982",icon:"#fff0b8"},{a:"#293f48",b:"#15272d",accent:"#8dd5e9",icon:"#c9f3ff"}];
 const palette=a=>{if(!a)return palettes[0];let hash=0;for(const c of a.id)hash=((hash*31)+c.charCodeAt(0))>>>0;return palettes[hash%palettes.length]};
@@ -658,6 +660,66 @@ button.addEventListener('click',async()=>{
 check.addEventListener('click',checkLink);
 window.addEventListener('focus',()=>{checkLink()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkLink()});
+// Cross-device workspace sync: server is authoritative after first merge.
+let workspaceRevision=0,workspaceReady=false,workspaceBusy=false,workspaceDirty=false;
+const workspaceUrl=API+'/api/workspace';
+const identity=a=>[a.city||'',a.street||'',a.house||''].join('|').toLocaleLowerCase();
+function mergeFirst(server,local){
+ if(!server)return local;
+ const result={...server,addresses:[...(server.addresses||[])]};
+ const known=new Set(result.addresses.map(identity));
+ for(const a of local.addresses||[]){const key=identity(a);if(!known.has(key)){result.addresses.push(a);known.add(key)}}
+ if(!result.primary||!result.addresses.some(a=>a.id===result.primary))result.primary=local.primary||result.addresses[0]?.id||null;
+ return result;
+}
+async function pullWorkspace(first=false){
+ if(!token()||window.svitloTelegramLinkState!=='linked')return;
+ try{
+  const r=await fetch(workspaceUrl,{headers:auth(),cache:'no-store'});
+  if(!r.ok)throw Error('workspace_get');
+  const data=await r.json();workspaceRevision=data.revision;
+  const local=window.svitloGetWorkspace?.();
+  if(!local)return;
+  if(first&&data.workspace){
+    const alreadyMerged=localStorage.getItem('svitlo_workspace_migrated_'+token().slice(0,12))==='1';
+    const combined=alreadyMerged?data.workspace:mergeFirst(data.workspace,local);
+    window.svitloApplyWorkspace(combined);workspaceReady=true;
+    localStorage.setItem('svitlo_workspace_migrated_'+token().slice(0,12),'1');
+    await sync();
+    if(combined.addresses.length!==data.workspace.addresses.length){workspaceDirty=true;await pushWorkspace();}
+  }else if(data.workspace){window.svitloApplyWorkspace(data.workspace);workspaceReady=true;await sync();}
+  else{workspaceReady=true;workspaceDirty=true;await pushWorkspace();}
+ }catch(e){console.warn('Світло UA: workspace sync unavailable',e)}
+}
+async function pushWorkspace(){
+ if(!workspaceReady||!token()||window.svitloTelegramLinkState!=='linked')return;
+ workspaceDirty=true;if(workspaceBusy)return;
+ workspaceBusy=true;
+ try{
+  while(workspaceDirty){
+   workspaceDirty=false;
+   const local=window.svitloGetWorkspace?.();if(!local)break;
+   const r=await fetch(workspaceUrl,{method:'PUT',headers:{...auth(),'Content-Type':'application/json'},body:JSON.stringify({revision:workspaceRevision,workspace:local})});
+   if(r.status===409){
+    const latest=await fetch(workspaceUrl,{headers:auth(),cache:'no-store'}).then(x=>x.json());
+    workspaceRevision=latest.revision;
+    // Preserve changes from both devices instead of overwriting remote addresses.
+    const merged=mergeFirst(latest.workspace,local);
+    const localIds=new Set((local.addresses||[]).map(a=>a.id));
+    for(const a of merged.addresses){const newer=(local.addresses||[]).find(x=>x.id===a.id);if(newer)Object.assign(a,newer)}
+    Object.assign(merged,{primary:local.primary,notifications:local.notifications,scheduleNotifications:local.scheduleNotifications,quietHours:local.quietHours,reminderMinutes:local.reminderMinutes,motion:local.motion});
+    window.svitloApplyWorkspace(merged);workspaceDirty=true;continue;
+   }
+   if(!r.ok)throw Error('workspace_save');
+   workspaceRevision=(await r.json()).revision;
+   await sync();
+  }
+ }catch(e){console.warn('Світло UA: workspace save failed',e)}finally{workspaceBusy=false;}
+}
+window.addEventListener('svitlo:telegram-link-state',e=>{if(e.detail?.state==='linked'&&!workspaceReady)pullWorkspace(true);if(e.detail?.state!=='linked')workspaceReady=false;});
+window.addEventListener('svitlo:workspace-updated',()=>{if(workspaceReady)pushWorkspace()});
+window.addEventListener('focus',()=>{if(workspaceReady&&!workspaceBusy)pullWorkspace(false)});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&workspaceReady&&!workspaceBusy)pullWorkspace(false)});
 // Updates address list/preferences on the server after local changes.
 window.addEventListener('storage',e=>{if(e.key==='svitlo_workspace_v2')sync()});
 window.addEventListener('svitlo:workspace-updated',()=>{sync()});
