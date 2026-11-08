@@ -146,6 +146,17 @@ body.welcome-lock{overflow:hidden}
 
 /* Address autocomplete: keyboard/touch accessible, no invented DTEK entries */
 .form-field{position:relative}.address-suggestions{display:none;position:relative;z-index:4;max-height:205px;overflow:auto;margin-top:6px;padding:5px;border-radius:14px;border:1px solid #3b414e;background:#252a34;box-shadow:0 12px 28px #0006}.address-suggestions.visible{display:block}.address-suggestions button{display:block;width:100%;text-align:left;border:0;background:transparent;color:#f6f7fa;padding:12px;border-radius:10px;font-size:14px}.address-suggestions button:focus-visible,.address-suggestions button:hover{background:#343b49}.address-suggestions .lookup-empty{padding:12px;color:#aab2c0;font-size:12px}.form-field input:disabled{opacity:.45}.lookup-ok{color:#79d7ac!important}.lookup-error{color:#f4b0a5!important}
+
+/* Interactive DTEK schedule: pointer and touch */
+.chart{position:relative;overflow:visible;isolation:isolate;touch-action:pan-y}
+.chart .bar{position:relative;cursor:pointer;transform-origin:center bottom;transition:transform .22s cubic-bezier(.2,.8,.2,1),filter .22s,opacity .22s;outline:none;z-index:1}
+.chart .bar:focus-visible,.chart .bar.bar-selected{transform:scaleY(1.36) scaleX(1.85);filter:brightness(1.22);opacity:1;z-index:6}
+@media(hover:hover){.chart .bar:hover{transform:scaleY(1.36) scaleX(1.85);filter:brightness(1.22);opacity:1;z-index:6}}
+.chart .bar:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}
+.chart-tooltip{position:absolute;z-index:12;left:50%;bottom:calc(100% + 15px);transform:translateX(-50%);width:max-content;max-width:min(285px,90vw);padding:10px 13px;border-radius:13px;background:#292d36;color:#f7f8fa;border:1px solid #505660;box-shadow:0 12px 28px #0009;pointer-events:none;text-align:center;font-size:12px;line-height:1.5;white-space:pre-line}
+.chart-tooltip[hidden]{display:none!important}
+.chart-tooltip:after{content:'';position:absolute;top:100%;left:50%;margin-left:-5px;border:5px solid transparent;border-top-color:#505660}
+@media(hover:none){.chart .bar{min-height:48px}}
 </style></head><body><div id="welcomeIntro" class="welcome-intro" role="presentation" aria-hidden="true"><div class="welcome-content"><div class="welcome-brand"><div class="welcome-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-9 12h7l-1 8 10-12h-7V2Z"/></svg></div><span>Світло <span style="color:#f5c84c">UA</span></span></div><div class="welcome-kicker">ВАШ ПРОСТІР. ВАШ КОНТРОЛЬ.</div><h2>Світло під<br>контролем<span style="color:#f5c84c">.</span></h2><p>Усе важливе про відключення — в одному місці.</p></div></div><main class="app"><header class="top"><div class="brand"><div class="mark" data-icon="bolt"></div><span>Світло <span style="color:var(--yellow)">UA</span></span></div><button type="button" class="avatar settings-trigger" id="openSettings" aria-label="Налаштування" data-icon="settings"></button></header><section id="home" class="screen"><div class="eyebrow">ВАШ ПРОСТІР. ВАШ КОНТРОЛЬ.</div><h1>Світло під<br>контролем<span style="color:var(--yellow)">.</span></h1><p class="sub">Усе важливе про відключення — в одному місці.</p><div class="quick-head"><span>ШВИДКИЙ ВИБІР АДРЕСИ</span><span id="quickCounter"></span></div><div id="quickAddresses" class="quick-addresses" aria-label="Швидке перемикання адрес"></div><button type="button" class="manage-addresses" id="manageAddresses"><span data-icon="sliders"></span> Керувати адресами <span data-icon="arrow-right"></span></button><article class="hero"><button class="address-button" id="addressPicker"><div><div class="eyebrow" id="heroAddressLabel">ОБРАНА АДРЕСА</div><div class="address-title" id="currentAddress">Додайте адресу</div><div class="sub" style="font-size:12px">Додайте адресу, щоб побачити графік ДТЕК</div></div><span class="hero-address-settings" data-icon="settings" aria-hidden="true"></span></button><div class="divider"></div><div class="live"><div class="power" data-icon="power"></div><div><div class="eyebrow">ЗАРАЗ ЗА ГРАФІКОМ</div><div class="status">Світло є</div><div class="sub" style="font-size:12px">До відключення: 2 год 15 хв</div></div></div><div class="stats"><div class="stat"><div class="stathead"><span data-icon="clock"></span>Наступне вимкнення</div><strong>18:00</strong><div class="sub" style="font-size:11px">Сьогодні</div></div><div class="stat"><div class="stathead"><span data-icon="moon"></span>Без світла за добу</div><strong>5 год</strong><div class="sub" style="font-size:11px">За планом</div></div></div></article><div class="section-title"><h2>Графік відключень</h2><span class="sub">24 години</span></div><article class="schedule"><div class="days"><button class="day active" data-day="0">Сьогодні</button><button class="day" data-day="1">Завтра</button><button class="day" data-day="2">Післязавтра</button></div><div class="chart" id="chart"></div><div class="axis"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div><div class="legend"><span><i class="dot" style="background:var(--green)"></i>Є світло</span><span><i class="dot" style="background:var(--red)"></i>Немає</span><span><i class="dot" style="background:var(--yellow)"></i>Можливо</span><span><i class="dot" style="background:#4b505c"></i>Немає даних</span></div><div class="note"><span data-icon="info"></span><span id="dayNote">Додайте адресу з довідника ДТЕК, щоб побачити графік.</span></div></article><div class="footnote">Дані графіка надходять від ДТЕК. Фактичний стан електропостачання може відрізнятися від планового.</div></section><section id="addresses" class="screen hidden"><div class="eyebrow">КЕРУВАННЯ ЛОКАЦІЯМИ</div><h1>Мої адреси<span style="color:var(--yellow)">.</span></h1><p class="sub">Зберігайте важливі місця та швидко переглядайте графіки.</p><div id="addressList" style="margin-top:26px"></div><button class="primary" id="addBtn"><span data-icon="plus"></span>Додати адресу</button><div class="form hidden" id="addForm"><label for="newAddr">Вулиця та номер будинку</label><input id="newAddr" placeholder="Наприклад, просп. Дмитра Яворницького, 1" maxlength="120"><button class="primary" id="saveAddr">Зберегти адресу</button><button class="softbtn" id="cancelAdd" style="width:100%">Скасувати</button></div><p class="footnote">Адреси зберігаються у цьому браузері. Експортуйте їх у налаштуваннях, щоб мати резервну копію.</p></section><section id="help" class="screen hidden"><div class="eyebrow">ЗАВЖДИ ПОРУЧ</div><h1>Допомога<span style="color:var(--yellow)">.</span></h1><p class="sub">Коротко про те, як працює Світло UA.</p><article class="help-card"><div class="help-icon" data-icon="help-circle"></div><h2 style="margin-top:19px">Як користуватися?</h2><p>Додайте адресу в розділі «Мої адреси». Оберіть її, щоб побачити інформацію на головному екрані.</p><p>Графіки завантажуються з ДТЕК через наш сервер. Сповіщення через Telegram-бота підключимо пізніше.</p></article><article class="help-card"><div class="row"><h2>Про застосунок</h2><span class="tag">WEB</span></div><p>Світло UA — незалежний вебзастосунок для перегляду планових графіків ДТЕК за обраною адресою.</p></article></section><section id="settings" class="screen hidden"><div class="eyebrow">ПЕРСОНАЛІЗАЦІЯ</div><h1>Налаштування<span style="color:var(--yellow)">.</span></h1><p class="sub">Налаштуйте застосунок під себе.</p><article class="settings-panel"><div class="settings-row"><div class="settings-icon" data-icon="volume"></div><div class="settings-copy"><strong>Звуки інтерфейсу</strong><small>Легкі звуки під час взаємодії</small></div><button type="button" id="soundToggle" class="ios-switch" role="switch" aria-label="Звуки інтерфейсу" aria-checked="true"><span></span></button></div></article><article class="settings-panel notification-panel" aria-label="Налаштування сповіщень">
 <div class="notification-heading"><span class="notification-heading-icon" data-icon="bell"></span><div><strong>Сповіщення про світло</strong><small>Налаштуйте, коли отримувати повідомлення</small></div></div>
 <div class="notification-delay"><div class="notification-label">Попереджати перед відключенням</div><div class="notification-options" role="group" aria-label="Час попередження"><button type="button" data-reminder="15">15 хв</button><button type="button" data-reminder="30">30 хв</button><button type="button" data-reminder="60">1 год</button><button type="button" data-reminder="0">Ні</button></div></div>
@@ -153,7 +164,7 @@ body.welcome-lock{overflow:hidden}
 <div class="notification-line"><div class="notification-line-icon" data-icon="calendar-clock"></div><div class="notification-line-text"><strong>Новий графік</strong><small>Коли графік опублікують або змінять</small></div><button type="button" id="scheduleNotifyToggle" class="ios-switch" role="switch" aria-label="Новий графік" aria-checked="false"><span></span></button></div>
 <div class="notification-line last"><div class="notification-line-icon" data-icon="moon"></div><div class="notification-line-text"><strong>Вночі без звуку</strong><small>З 22:00 до 07:00 — тихі сповіщення</small></div><button type="button" id="quietToggle" class="ios-switch" role="switch" aria-label="Вночі без звуку" aria-checked="false"><span></span></button></div>
 <p class="notification-disclaimer">Ці параметри поки зберігаються лише у браузері. Надсилання сповіщень підключимо окремо.</p>
-</article><article class="settings-panel" id="telegramLinkPanel" style="margin-top:14px"><div class="settings-row"><div class="settings-icon" data-icon="bell"></div><div class="settings-copy"><strong>Telegram-сповіщення</strong><small id="telegramLinkStatus">Не підключено</small></div></div><button type="button" class="primary" id="telegramLinkBtn">Підключити Telegram</button><button type="button" class="secondary-button" id="telegramCheckBtn" style="margin-top:9px">Перевірити підключення</button><p class="micro">Сайт працює без Telegram. Після підключення бот сповіщатиме про зміни графіка ДТЕК за вибраними адресами.</p></article><article class="settings-panel" style="margin-top:14px"><div class="switch-row"><div><strong>Зменшити анімації</strong><small>Менше руху під час переходів</small></div><button type="button" id="motionToggle" class="ios-switch" role="switch" aria-checked="false"><span></span></button></div></article><article class="settings-panel" style="margin-top:14px"><button class="setting-action" id="exportData"><span data-icon="download"></span>Експортувати мої адреси</button></article><p class="micro">Налаштування сповіщень зберігаються локально. Поки вони не запускають надсилання повідомлень.</p><p class="footnote">Звуки ввімкнено за замовчуванням. Їх можна вимкнути тут у будь-який момент. На деяких пристроях звук почне відтворюватися після першого натискання.</p><button type="button" class="softbtn" id="backSettings" style="width:100%;margin-top:24px">Повернутися назад</button></section><section id="detail" class="screen hidden"><div class="eyebrow">ІНФОРМАЦІЯ ПРО АДРЕСУ</div><h1>Моя адреса<span style="color:var(--yellow)">.</span></h1><p class="sub" id="detailAddress">Оберіть адресу</p><div class="info-panel detail-premium" id="detailInfo"></div><div class="section-heading">Прогноз на три дні</div><div class="forecast-list" id="detailForecast"></div><button type="button" id="jumpActions" class="jump-actions" aria-label="Перейти до керування адресою"><span data-icon="sliders"></span><span>Керування адресою</span><span data-icon="chevron-down"></span></button><div class="address-preferences" id="detailActions">
+</article><article class="settings-panel" id="telegramLinkPanel" style="margin-top:14px"><div class="settings-row"><div class="settings-icon" data-icon="bell"></div><div class="settings-copy"><strong>Telegram-сповіщення</strong><small id="telegramLinkStatus">Не підключено</small></div></div><button type="button" class="primary" id="telegramLinkBtn">Підключити Telegram</button><button type="button" class="secondary-button" id="telegramCheckBtn" style="margin-top:9px">Перевірити підключення</button><div id="telegramTestPanel" class="hidden" style="margin-top:16px"><strong style="font-size:13px">Перевірка Telegram-сповіщень</strong><p class="micro">Тестові повідомлення не означають реальне відключення. Оберіть адресу та функцію:</p><select id="telegramTestAddress" style="width:100%;background:#242832;color:white;border:1px solid #3c4351;border-radius:12px;padding:12px;margin:10px 0"></select><div class="utility-grid" style="grid-template-columns:1fr 1fr"><button type="button" data-test="reminder15">15 хв</button><button type="button" data-test="reminder30">30 хв</button><button type="button" data-test="reminder60">60 хв</button><button type="button" data-test="reminder0">Ні</button><button type="button" data-test="power_on">Світло дадуть</button><button type="button" data-test="schedule">Новий графік</button><button type="button" data-test="quiet">Вночі без звуку</button><button type="button" data-test="address">Ця адреса</button></div><p class="micro" id="telegramTestStatus" role="status"></p></div><p class="micro">Сайт працює без Telegram. Після підключення бот сповіщатиме про зміни графіка ДТЕК за вибраними адресами.</p></article><article class="settings-panel" style="margin-top:14px"><div class="switch-row"><div><strong>Зменшити анімації</strong><small>Менше руху під час переходів</small></div><button type="button" id="motionToggle" class="ios-switch" role="switch" aria-checked="false"><span></span></button></div></article><article class="settings-panel" style="margin-top:14px"><button class="setting-action" id="exportData"><span data-icon="download"></span>Експортувати мої адреси</button></article><p class="micro">Налаштування синхронізуються з ботом після підключення Telegram.</p><p class="footnote">Звуки ввімкнено за замовчуванням. Їх можна вимкнути тут у будь-який момент. На деяких пристроях звук почне відтворюватися після першого натискання.</p><button type="button" class="softbtn" id="backSettings" style="width:100%;margin-top:24px">Повернутися назад</button></section><section id="detail" class="screen hidden"><div class="eyebrow">ІНФОРМАЦІЯ ПРО АДРЕСУ</div><h1>Моя адреса<span style="color:var(--yellow)">.</span></h1><p class="sub" id="detailAddress">Оберіть адресу</p><div class="info-panel detail-premium" id="detailInfo"></div><div class="section-heading">Прогноз на три дні</div><div class="forecast-list" id="detailForecast"></div><button type="button" id="jumpActions" class="jump-actions" aria-label="Перейти до керування адресою"><span data-icon="sliders"></span><span>Керування адресою</span><span data-icon="chevron-down"></span></button><div class="address-preferences" id="detailActions">
 <div class="address-preference-row"><div class="address-preference-icon" data-icon="bell"></div><div class="address-preference-copy"><strong>Сповіщення для цієї адреси</strong><small>Збережеться для цієї адреси</small></div><button type="button" id="addressNotifyToggle" class="ios-switch" role="switch" aria-label="Сповіщення для цієї адреси" aria-checked="true"><span></span></button></div>
 <div class="address-preference-row"><div class="address-preference-icon" data-icon="star"></div><div class="address-preference-copy"><strong id="primaryText">Основна адреса</strong><small>Використовувати за замовчуванням</small></div><button type="button" id="detailPrimary" class="ios-switch" role="switch" aria-label="Основна адреса" aria-checked="false"><span></span></button></div>
 </div><div class="action-list"><button id="detailCategory"><span data-icon="tag"></span>Тип адреси</button><button id="detailDelete" class="danger"><span data-icon="trash-2"></span>Видалити адресу</button><button id="detailBack"><span data-icon="arrow-left"></span>На головну</button></div><p class="micro">Інформація про електропостачання — за графіком ДТЕК, а не фактичним вимірюванням. Графік плановий; фактичний стан електропостачання може відрізнятися.</p></section>
@@ -248,7 +259,7 @@ $('addBack').onclick=()=>showScreen('addresses');
 $('categoryBack').onclick=()=>showScreen('detail');
 function renderList(){const root=$('addressList');root.replaceChildren();store.addresses.forEach(a=>{const b=document.createElement('button');b.className='address-card'+(a.id===store.primary?' selected':'');b.style.setProperty('--address-accent',palette(a).accent);b.style.setProperty('--address-bg',palette(a).b);const left=document.createElement('span');left.className='address-icon';left.style.background=palette(a).a;left.style.color=palette(a).accent;left.innerHTML=icon(categoryIcon(a));const copy=document.createElement('span');copy.className='address-copy';const strong=document.createElement('strong');strong.textContent=title(a);const small=document.createElement('small');small.textContent=(a.kind||'Дім')+(a.id===store.primary?' · Основна адреса':'');copy.append(strong,small);const arrow=document.createElement('span');arrow.className='check';arrow.innerHTML=icon('arrow-right');b.append(left,copy,arrow);b.onclick=()=>{activeId=a.id;renderDetail();showScreen('detail')};root.append(b)});if(!store.addresses.length){const d=document.createElement('div');d.className='empty-state';d.textContent='Адрес ще немає. Додайте першу адресу, щоб налаштувати моніторинг.';root.append(d)}}
 function renderHome(){if(!active()&&store.addresses.length)activeId=store.primary||store.addresses[0].id;const a=active();renderQuick();$('currentAddress').textContent=a?title(a):'Додайте адресу';$('heroAddressLabel').textContent=a?.id===store.primary?'ОСНОВНА АДРЕСА':'ОБРАНА АДРЕСА';const hero=document.querySelector('.hero');if(hero){const theme=palette(a);hero.style.setProperty('--hero-a',theme.a);hero.style.setProperty('--hero-b',theme.b);hero.style.setProperty('--hero-accent',theme.accent);hero.querySelector('.address-button .sub').textContent='Група: не визначена · ДТЕК не підключено';hero.querySelector('.live .status').textContent='Немає даних';hero.querySelector('.live .sub').textContent='Час наступної зміни невідомий';hero.querySelectorAll('.stats .stat strong').forEach(el=>el.textContent='—');hero.querySelectorAll('.stats .stat .sub').forEach(el=>el.textContent='Немає графіка');const labels=[...hero.querySelectorAll('*')];labels.forEach(el=>{if(el.children.length===0&&el.textContent&&/Світло є|Світла немає|Наступне відключення|Дані оновлено|За графіком/.test(el.textContent)){if(/Світло є|Світла немає/.test(el.textContent))el.textContent='Статус невідомий';else if(/Наступне відключення/.test(el.textContent))el.textContent='Наступна зміна невідома';else if(/Дані оновлено/.test(el.textContent))el.textContent='Дані не підключені';}})}drawDay(dayIndex)}
-function drawDay(d){dayIndex=d;const chart=$('chart');chart.replaceChildren();for(let h=0;h<24;h++){const bar=document.createElement('div');bar.className='bar unknown';bar.title=`${String(h).padStart(2,'0')}:00 — даних немає`;chart.append(bar)}document.querySelectorAll('.day').forEach(b=>b.classList.toggle('active',Number(b.dataset.day)===d));$('dayNote').textContent='Графік ДТЕК ще не підключено. Порожні години не означають наявність світла.';}
+function drawDay(d){dayIndex=d;const chart=$('chart');chart.replaceChildren();for(let h=0;h<24;h++){const bar=document.createElement('div');bar.className='bar unknown';bar.title=`${String(h).padStart(2,'0')}:00 — даних немає`;bar.dataset.scheduleInfo=bar.title;bar.tabIndex=0;bar.setAttribute('role','button');chart.append(bar)}document.querySelectorAll('.day').forEach(b=>b.classList.toggle('active',Number(b.dataset.day)===d));$('dayNote').textContent='Графік ДТЕК ще не підключено. Порожні години не означають наявність світла.';}
 document.querySelectorAll('.day').forEach(b=>b.onclick=()=>drawDay(Number(b.dataset.day)));
 function renderDetail(){
  const a=active();if(!a)return showScreen('addresses');
@@ -319,15 +330,18 @@ const nt=$('notifyToggle'),mt=$('motionToggle'),scheduleNt=$('scheduleNotifyTogg
 store.reminderMinutes=[0,15,30,60].includes(store.reminderMinutes)?store.reminderMinutes:30;
 store.scheduleNotifications=store.scheduleNotifications??true;
 store.quietHours=store.quietHours??true;
-function syncReminder(){document.querySelectorAll('[data-reminder]').forEach(b=>{const chosen=Number(b.dataset.reminder)===store.reminderMinutes;b.classList.toggle('chosen',chosen);b.setAttribute('aria-pressed',String(chosen))})}
-document.querySelectorAll('[data-reminder]').forEach(b=>b.addEventListener('click',()=>{store.reminderMinutes=Number(b.dataset.reminder);persist();syncReminder();notice(store.reminderMinutes?'Попередження: за '+store.reminderMinutes+' хв':'Попередження вимкнено')}));
+function prefs(){return store}
+function refreshNotifyPrefs(){syncReminder();syncSwitch(nt,prefs().notifications??store.notifications);syncSwitch(scheduleNt,prefs().scheduleNotifications??store.scheduleNotifications);syncSwitch(quietNt,prefs().quietHours??store.quietHours)}
+function syncReminder(){document.querySelectorAll('[data-reminder]').forEach(b=>{const chosen=Number(b.dataset.reminder)===(prefs().reminderMinutes??store.reminderMinutes);b.classList.toggle('chosen',chosen);b.setAttribute('aria-pressed',String(chosen))})}
+document.querySelectorAll('[data-reminder]').forEach(b=>b.addEventListener('click',()=>{prefs().reminderMinutes=Number(b.dataset.reminder);persist();syncReminder();notice(prefs().reminderMinutes?'Попередження: за '+prefs().reminderMinutes+' хв':'Попередження вимкнено')}));
 syncReminder();
 function syncSwitch(b,on){b.classList.toggle('on',!!on);b.setAttribute('aria-checked',String(!!on))}
 syncSwitch(nt,store.notifications);syncSwitch(scheduleNt,store.scheduleNotifications);syncSwitch(quietNt,store.quietHours);syncSwitch(mt,store.motion);
+document.addEventListener('click',e=>{if(e.target.closest('[data-tab=settings],#openSettings'))setTimeout(refreshNotifyPrefs,0)});
 function applyMotion(){document.documentElement.classList.toggle('reduced-ui-motion',!!store.motion)}applyMotion();
-nt.onclick=()=>{store.notifications=!store.notifications;persist();syncSwitch(nt,store.notifications);notice('Це локальна настройка. Сповіщення Telegram поки не підключені')};
-scheduleNt.onclick=()=>{store.scheduleNotifications=!store.scheduleNotifications;persist();syncSwitch(scheduleNt,store.scheduleNotifications);notice('Налаштування збережено локально')};
-quietNt.onclick=()=>{store.quietHours=!store.quietHours;persist();syncSwitch(quietNt,store.quietHours);notice('Налаштування збережено локально')};
+nt.onclick=()=>{prefs().notifications=!(prefs().notifications??store.notifications);persist();syncSwitch(nt,prefs().notifications);notice('Налаштування збережено')};
+scheduleNt.onclick=()=>{prefs().scheduleNotifications=!(prefs().scheduleNotifications??store.scheduleNotifications);persist();syncSwitch(scheduleNt,prefs().scheduleNotifications);notice('Налаштування збережено')};
+quietNt.onclick=()=>{prefs().quietHours=!(prefs().quietHours??store.quietHours);persist();syncSwitch(quietNt,prefs().quietHours);notice('Налаштування збережено')};
 mt.onclick=()=>{store.motion=!store.motion;persist();syncSwitch(mt,store.motion);applyMotion();notice(store.motion?'Анімації зменшено':'Анімації ввімкнено')};
 
 $('exportData').onclick=()=>{const blob=new Blob([JSON.stringify({addresses:store.addresses,primary:store.primary},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='svitlo-ua-addresses.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
@@ -381,6 +395,8 @@ drawDay=function(d){oldDrawDay(d);const data=currentLive();if(!data||data.error)
  day.slots.forEach((pair,h)=>{const bar=bars[h];if(!bar)return;const states=Array.isArray(pair)?pair:['unknown','unknown'];const mixed=states[0]!==states[1];bar.className='bar '+(mixed?'':states[0]==='off'?'off':states[0]==='maybe'?'maybe':states[0]==='on'?'':'unknown');
  if(mixed){const color={on:'var(--green)',off:'var(--red)',maybe:'var(--yellow)',unknown:'#4b505c'};bar.style.background=`linear-gradient(to bottom,${color[states[0]]||color.unknown} 0 50%,${color[states[1]]||color.unknown} 50% 100%)`;}else bar.style.background='';
  bar.title=String(h).padStart(2,'0')+':00 — '+(stateLabel[states[0]]||'Немає даних')+'; :30 — '+(stateLabel[states[1]]||'Немає даних');
+ bar.dataset.scheduleInfo=String(h).padStart(2,'0')+':00–'+String(h).padStart(2,'0')+':30 · '+(stateLabel[states[0]]||'Немає даних')+'\n'+String(h).padStart(2,'0')+':30–'+String(h+1).padStart(2,'0')+':00 · '+(stateLabel[states[1]]||'Немає даних');
+ bar.tabIndex=0;bar.setAttribute('role','button');bar.setAttribute('aria-label',bar.dataset.scheduleInfo.replace('\n','; '));
  });
  $('dayNote').textContent='Графік ДТЕК на '+dateKyiv(day.date+'T12:00:00+02:00')+'. Дані планові, не показують фактичну наявність електрики.';
 };
@@ -438,8 +454,8 @@ async function checkLink(){
   const r=await fetch(API+'/api/link/status',{headers:auth()});
   if(!r.ok)throw Error('HTTP '+r.status);
   const d=await r.json();
-  if(d.linked){status('Підключено ✓');button.textContent='Перепідключити Telegram';await sync();return true;}
-  status('Очікуємо підтвердження в боті');return false;
+  if(d.linked){status('Підключено ✓');button.textContent='Перепідключити Telegram';$('telegramTestPanel').classList.remove('hidden');await sync();fillTestAddresses();return true;}
+  $('telegramTestPanel').classList.add('hidden');status('Очікуємо підтвердження в боті');return false;
  }catch(e){status('Помилка зв’язку з сервером');return false;}
 }
 async function sync(){
@@ -447,13 +463,34 @@ async function sync(){
  let s;try{s=JSON.parse(localStorage.getItem('svitlo_workspace_v2')||'{}')}catch{return}
  const addresses=(s.addresses||[]).filter(a=>a.city&&a.street&&a.house).map(a=>({
   id:a.id,city:a.city,street:a.street,house:a.house,
-  enabled:a.notificationsEnabled!==false && s.notifications===true
+  enabled:a.notificationsEnabled!==false,
+  reminderMinutes:s.reminderMinutes??0,notifyOn:s.notifications===true,
+  notifySchedule:s.scheduleNotifications===true,quietHours:s.quietHours===true
  }));
  try{
   const r=await fetch(API+'/api/link/sync',{method:'POST',headers:{...auth(),'Content-Type':'application/json'},body:JSON.stringify({addresses})});
   if(!r.ok)throw Error('HTTP '+r.status);
  }catch(e){status('Не вдалося синхронізувати адреси');}
 }
+function fillTestAddresses(){
+ let s;try{s=JSON.parse(localStorage.getItem('svitlo_workspace_v2')||'{}')}catch{return}
+ const select=$('telegramTestAddress'),previous=select.value;select.replaceChildren();
+ for(const a of (s.addresses||[]).filter(a=>a.city&&a.street&&a.house)){
+  const o=document.createElement('option');o.value=a.id;o.textContent=[a.city,a.street,a.house].join(', ');select.append(o);
+ }
+ if([...select.options].some(o=>o.value===previous))select.value=previous;
+}
+document.querySelectorAll('[data-test]').forEach(btn=>btn.addEventListener('click',async()=>{
+ const target=$('telegramTestAddress').value,output=$('telegramTestStatus');
+ if(!target){output.textContent='Спочатку додайте адресу';return;}
+ output.textContent='Надсилаємо тест…';btn.disabled=true;
+ try{
+  const r=await fetch(API+'/api/link/test',{method:'POST',headers:{...auth(),'Content-Type':'application/json'},body:JSON.stringify({address_id:target,kind:btn.dataset.test})});
+  if(!r.ok)throw Error('HTTP '+r.status);
+  output.textContent='✅ Тест надіслано. Перевірте чат бота.';
+ }catch(e){output.textContent='❌ Не вдалося надіслати тест: '+e.message;}
+ finally{btn.disabled=false;}
+}));
 button.addEventListener('click',async()=>{
  try{
   status('Створюємо посилання…');
@@ -467,7 +504,40 @@ button.addEventListener('click',async()=>{
 check.addEventListener('click',checkLink);
 // Updates address list/preferences on the server after local changes.
 window.addEventListener('storage',e=>{if(e.key==='svitlo_workspace_v2')sync()});
-window.addEventListener('svitlo:workspace-updated',()=>{sync()});
+window.addEventListener('svitlo:workspace-updated',()=>{sync();fillTestAddresses()});
 checkLink();
 })();
-</script></body></html>
+</script>
+<script>
+(()=>{
+ const chart=document.getElementById('chart');if(!chart)return;
+ const tip=document.createElement('div');tip.className='chart-tooltip';tip.hidden=true;
+ chart.appendChild(tip);
+ let chosen=null,hideTimer=null;
+ function cancelHide(){if(hideTimer!==null){clearTimeout(hideTimer);hideTimer=null;}}
+ function clear(){cancelHide();if(chosen)chosen.classList.remove('bar-selected');chosen=null;tip.hidden=true;}
+ function hideSoon(delay=250){cancelHide();hideTimer=setTimeout(()=>{hideTimer=null;clear();},delay);}
+ function select(bar){
+  if(!bar||!bar.classList.contains('bar'))return;
+  cancelHide();
+  if(chosen&&chosen!==bar)chosen.classList.remove('bar-selected');
+  chosen=bar;bar.classList.add('bar-selected');
+  const label=bar.dataset.scheduleInfo||bar.getAttribute('title')||'Немає даних';
+  // Prevent the browser's native tooltip from covering our own.
+  if(bar.hasAttribute('title')){bar.dataset.originalTitle=bar.getAttribute('title');bar.removeAttribute('title');}
+  tip.textContent=label;tip.hidden=false;
+  const chartBox=chart.getBoundingClientRect(),barBox=bar.getBoundingClientRect();
+  const x=barBox.left+barBox.width/2-chartBox.left;
+  tip.style.left=Math.max(85,Math.min(chartBox.width-85,x))+'px';
+ }
+ chart.addEventListener('pointerover',e=>{if(e.pointerType==='mouse'){const bar=e.target.closest('.bar');if(bar)select(bar);}});
+ chart.addEventListener('pointerout',e=>{if(e.pointerType==='mouse'&&!chart.contains(e.relatedTarget))hideSoon(250)});
+ chart.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'){const bar=e.target.closest('.bar');if(bar&&bar!==chosen)select(bar);}});
+ chart.addEventListener('click',e=>{const bar=e.target.closest('.bar');if(!bar)return;select(bar);if(!window.matchMedia('(hover: hover)').matches)hideSoon(300)});
+ chart.addEventListener('focusin',e=>{const bar=e.target.closest('.bar');if(bar)select(bar)});
+ chart.addEventListener('focusout',e=>{if(!chart.contains(e.relatedTarget))hideSoon(250)});
+ document.addEventListener('pointerdown',e=>{if(!chart.contains(e.target))clear()});
+ new MutationObserver(()=>{if(chosen&&!chosen.isConnected)clear();if(!tip.isConnected)chart.append(tip)}).observe(chart,{childList:true});
+})();
+</script>
+</body></html>
