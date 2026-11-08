@@ -354,4 +354,7 @@ renderHome();renderList();drawDay(0);persist();
  setTimeout(finish,delay);
  splash.addEventListener('pointerdown',finish,{once:true});
 })();
+<script>
+  const tg = window.Telegram?.WebApp;
+  console.log("Telegram auth:", tg?.initData ? "OK" : "NO DATA");
 </script></body></html>
