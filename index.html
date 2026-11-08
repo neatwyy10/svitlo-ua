@@ -249,7 +249,7 @@ const paths={volume:'<path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 
 });
  document.getElementById('backSettings').addEventListener('click',()=>show(previousTab));
  function tone(freq,delay,duration,vol,type='sine'){
-  vol=Math.min(1,vol*1.5*(volume/100));
+  vol=Math.min(.35,vol*4.2*(volume/100));
   if(!ctx)return;const now=ctx.currentTime+delay,osc=ctx.createOscillator(),gain=ctx.createGain();
   osc.type=type;osc.frequency.setValueAtTime(freq,now);gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(vol,now+.008);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);osc.connect(gain);gain.connect(ctx.destination);osc.start(now);osc.stop(now+duration+.01)
  }
@@ -401,7 +401,7 @@ $('createAddress').onclick=()=>{const city=$('cityInput').value.trim(),street=$(
 $('detailPrimary').onclick=()=>{const a=active();if(!a)return;store.primary=store.primary===a.id?null:a.id;persist();renderDetail();renderHome();notice(store.primary?'Основну адресу змінено':'Позначку основної адреси прибрано')};
 $('addressNotifyToggle').onclick=()=>{const a=active();if(!a)return;a.notificationsEnabled=a.notificationsEnabled===false;persist();renderDetail();renderQuick();renderHome();notice(a.notificationsEnabled?'Сповіщення для адреси ввімкнено':'Сповіщення для адреси вимкнено')};
 $('detailDelete').onclick=()=>{const a=active();if(!a||!confirm('Видалити адресу «'+title(a)+'»?'))return;store.addresses=store.addresses.filter(x=>x.id!==a.id);if(store.primary===a.id)store.primary=store.addresses[0]?.id||null;activeId=store.primary||store.addresses[0]?.id||null;persist();renderHome();showScreen('addresses');notice('Адресу видалено')};
-$('jumpActions').onclick=()=>{const target=$('detailActions');target.scrollIntoView({behavior:store.motion?'instant':'smooth',block:'start'});};
+$('jumpActions').onclick=()=>{const target=$('detailActions');const y=window.scrollY+target.getBoundingClientRect().top-19;window.scrollTo({top:Math.max(0,y),behavior:store.motion?'instant':'smooth'});};
 $('detailCategory').onclick=()=>{$('categoryAddress').textContent=title(active());$('customKindArea').classList.add('hidden');showScreen('category')};
 document.querySelectorAll('[data-kind]').forEach(b=>b.onclick=()=>{if(b.dataset.kind==='Інше'){$('customKindArea').classList.remove('hidden');$('customKind').focus();return}active().kind=b.dataset.kind;persist();renderHome();renderDetail();showScreen('detail');notice('Тип адреси змінено')});
 $('saveKind').onclick=()=>{const val=$('customKind').value.trim();if(!val){notice('Введіть назву');return}active().kind=val;persist();renderHome();renderDetail();showScreen('detail');notice('Назву збережено')};
