@@ -288,6 +288,19 @@ body.welcome-lock{overflow:hidden}
 .eg-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;padding:9px;background:#100f1c;border:1px solid #51465e;border-radius:18px;aspect-ratio:1;max-width:460px;margin:auto}.eg-cell{border:1px solid #4c455b;background:#28243a;color:#82798e;border-radius:11px;min-width:0;min-height:0;padding:0;position:relative;cursor:pointer;transition:background .16s,box-shadow .16s;touch-action:manipulation}.eg-cell svg{width:100%;height:100%;display:block;transform:rotate(var(--rot));transition:transform .15s}.eg-cell.on{color:#ffe178;background:#554521;box-shadow:inset 0 0 12px #e6bd4222,0 0 10px #f4d26033}.eg-cell.source{border-color:#e4b93c}.eg-cell.house{border-color:#9e7cbd}.eg-cell:focus-visible{outline:2px solid #f5c84c;outline-offset:2px}.eg-cell .eg-symbol{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;font-size:clamp(11px,3vw,19px);text-shadow:0 1px 3px #000}.eg-cell .eg-symbol.house-lit{filter:drop-shadow(0 0 6px #f5c84c)}
 .eg-bottom{display:flex;gap:9px;margin-top:15px}.eg-action{flex:1;min-height:45px;border:1px solid #64556f;border-radius:13px;background:#39314c;color:white;font-weight:750;cursor:pointer}.eg-action.primary{background:#f5c84c;color:#171620;border-color:#f5c84c}.eg-message{text-align:center;min-height:22px;margin-top:12px;font-size:13px;color:#f5d269}.eg-help{text-align:center;color:#a9a1b9;font-size:11px;line-height:1.5;margin:12px 0 0}
 @media(prefers-reduced-motion:reduce){.hero .power.secret-hint,.eg-cell svg{animation:none!important;transition:none!important}}
+
+/* Clean 24-hour outage strip: uninterrupted colors and outage boundary times */
+.chart{display:grid;grid-template-columns:repeat(48,minmax(0,1fr));gap:0;height:58px;align-items:stretch;border-radius:9px;overflow:visible;background:#303540;position:relative;margin-top:64px;touch-action:pan-y}
+.chart .bar{height:58px;min-height:58px;border-radius:0;animation:none!important;opacity:1!important;transform:none!important;filter:none!important;box-shadow:none!important;cursor:default;pointer-events:none}
+.chart .bar:first-child{border-radius:9px 0 0 9px}.chart .bar:nth-child(48){border-radius:0 9px 9px 0}
+.chart .bar.bar-selected,.chart .bar:focus-visible{transform:none!important;filter:none!important;outline:0!important;box-shadow:none!important}
+@media(hover:hover){.chart .bar:hover{transform:none!important;filter:none!important}}
+.chart-boundary{position:absolute;top:-40px;height:40px;z-index:4;pointer-events:none;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;white-space:nowrap}
+.chart-boundary span{font-size:12px;font-weight:750;letter-spacing:-.15px;color:#f3f5f8;font-variant-numeric:tabular-nums;background:#171a21;padding:2px 5px;border-radius:5px}
+.chart-boundary:after{content:'';height:15px;width:1.5px;background:#dfe4ec;opacity:.9;position:absolute;bottom:0}
+.chart-boundary.edge-left{transform:translateX(0)}.chart-boundary.edge-right{transform:translateX(-100%)}
+.chart-boundary.edge-left:after{left:0}.chart-boundary.edge-right:after{right:0}
+.chart-tooltip,.chart-selection,.chart .now-marker{display:none!important}
 </style></head><body><div id="welcomeIntro" class="welcome-intro" role="presentation" aria-hidden="true"><div class="welcome-content"><div class="welcome-brand"><div class="welcome-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-9 12h7l-1 8 10-12h-7V2Z"/></svg></div><span>Світло <span style="color:#f5c84c">UA</span></span></div><div class="welcome-kicker">ВАШ ПРОСТІР. ВАШ КОНТРОЛЬ.</div><h2>Світло під<br>контролем<span style="color:#f5c84c">.</span></h2><p>Усе важливе про відключення — в одному місці.</p></div></div><main class="app"><header class="top"><div class="brand"><div class="mark" data-icon="bolt"></div><span>Світло <span style="color:var(--yellow)">UA</span></span></div><button type="button" class="avatar settings-trigger" id="openSettings" aria-label="Налаштування" data-icon="settings"></button></header><section id="home" class="screen"><div class="eyebrow">ВАШ ПРОСТІР. ВАШ КОНТРОЛЬ.</div><h1>Світло під<br>контролем<span style="color:var(--yellow)">.</span></h1><p class="sub">Усе важливе про відключення — в одному місці.</p><div class="quick-head"><span>ШВИДКИЙ ВИБІР АДРЕСИ</span><span id="quickCounter"></span></div><div id="quickAddresses" class="quick-addresses" aria-label="Швидке перемикання адрес"></div><button type="button" class="manage-addresses" id="manageAddresses"><span data-icon="sliders"></span> Керувати адресами <span data-icon="arrow-right"></span></button><article class="hero"><button class="address-button" id="addressPicker"><div><div class="eyebrow" id="heroAddressLabel">ОБРАНА АДРЕСА</div><div class="address-title" id="currentAddress">Додайте адресу</div><div class="sub" style="font-size:12px">Додайте адресу, щоб побачити графік ДТЕК</div></div><span class="hero-address-settings" data-icon="settings" aria-hidden="true"></span></button><div class="divider"></div><div class="live"><div class="power" data-icon="power"></div><div><div class="eyebrow">ЗАРАЗ ЗА ГРАФІКОМ</div><div class="status">Світло є</div><div class="sub" style="font-size:12px">До відключення: 2 год 15 хв</div></div></div><div class="stats"><div class="stat"><div class="stathead"><span data-icon="clock"></span>Наступне вимкнення</div><strong>18:00</strong><div class="sub" style="font-size:11px">Сьогодні</div></div><div class="stat"><div class="stathead"><span data-icon="moon"></span>Без світла за добу</div><strong>5 год</strong><div class="sub" style="font-size:11px">За планом</div></div></div></article><div class="section-title"><h2>Графік відключень</h2><span class="sub">24 години</span></div><article class="schedule"><div class="days"><button class="day active" data-day="0">Сьогодні</button><button class="day" data-day="1">Завтра</button><button class="day" data-day="2">Післязавтра</button></div><div class="chart" id="chart"></div><div class="axis"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div><div class="legend"><span><i class="dot" style="background:var(--green)"></i>Є світло</span><span><i class="dot" style="background:var(--red)"></i>Немає</span><span><i class="dot" style="background:var(--yellow)"></i>Можливо</span><span><i class="dot" style="background:#4b505c"></i>Немає даних</span></div><div class="note"><span data-icon="info"></span><span id="dayNote">Додайте адресу з довідника ДТЕК, щоб побачити графік.</span></div></article><div class="footnote">Дані графіка надходять від ДТЕК. Фактичний стан електропостачання може відрізнятися від планового.</div></section><section id="addresses" class="screen hidden"><div class="eyebrow">КЕРУВАННЯ ЛОКАЦІЯМИ</div><h1>Мої адреси<span style="color:var(--yellow)">.</span></h1><p class="sub">Зберігайте важливі місця та швидко переглядайте графіки.</p><div id="addressList" style="margin-top:26px"></div><button class="primary" id="addBtn"><span data-icon="plus"></span>Додати адресу</button><div class="form hidden" id="addForm"><label for="newAddr">Вулиця та номер будинку</label><input id="newAddr" placeholder="Наприклад, просп. Дмитра Яворницького, 1" maxlength="120"><button class="primary" id="saveAddr">Зберегти адресу</button><button class="softbtn" id="cancelAdd" style="width:100%">Скасувати</button></div><p class="footnote">Адреси зберігаються у цьому браузері. Експортуйте їх у налаштуваннях, щоб мати резервну копію.</p></section><section id="help" class="screen hidden"><div class="eyebrow">ЗАВЖДИ ПОРУЧ</div><h1>Допомога<span style="color:var(--yellow)">.</span></h1><p class="sub">Коротко про те, як працює Світло UA.</p><article class="help-card"><div class="help-icon" data-icon="help-circle"></div><h2 style="margin-top:19px">Як користуватися?</h2><p>Додайте адресу в розділі «Мої адреси». Оберіть її, щоб побачити інформацію на головному екрані.</p><p>Графіки завантажуються з ДТЕК через наш сервер. Сповіщення надходять у Telegram після підключення бота.</p></article><article class="help-card"><h2>Навчання по застосунку</h2><p>Хочете ще раз пройти всі можливості Світло UA? Запустіть покрокову екскурсію з підсвічуванням елементів.</p><div class="tour-mode-buttons"><button type="button" class="primary" id="startQuickTour">⚡ Швидке навчання · 4 кроки</button><button type="button" class="softbtn" id="startShortTour">✨ Коротке навчання · 8 кроків</button><button type="button" class="softbtn" id="restartGuidedTour">🎓 Повне навчання · 17 кроків</button></div></article><article class="help-card"><div class="row"><h2>Про застосунок</h2><span class="tag">WEB</span></div><p>Світло UA — незалежний вебзастосунок для перегляду планових графіків ДТЕК за обраною адресою.</p></article></section><section id="settings" class="screen hidden"><div class="eyebrow">ПЕРСОНАЛІЗАЦІЯ</div><h1>Налаштування<span style="color:var(--yellow)">.</span></h1><p class="sub">Налаштуйте застосунок під себе.</p><article class="settings-panel"><div class="settings-row"><div class="settings-icon" data-icon="volume"></div><div class="settings-copy"><strong>Звуки інтерфейсу</strong><small>Легкі звуки під час взаємодії</small></div><button type="button" id="soundToggle" class="ios-switch" role="switch" aria-label="Звуки інтерфейсу" aria-checked="true"><span></span></button></div><div class="volume-control" id="volumeControl"><div class="volume-head"><label for="soundVolume">Гучність звуків</label><strong id="soundVolumeValue">100%</strong></div><div class="volume-slider-wrap"><input id="soundVolume" type="range" min="50" max="150" step="1" value="100" aria-label="Гучність звуків"><span class="volume-center-mark" aria-hidden="true"></span></div><div class="volume-labels"><span>50%</span><span>100% · стандарт</span><span>150%</span></div></div></article><article class="settings-panel notification-panel" aria-label="Налаштування сповіщень">
 <div class="notification-heading"><span class="notification-heading-icon" data-icon="bell"></span><div><strong>Сповіщення про світло</strong><small>Налаштуйте, коли отримувати повідомлення</small></div></div>
 <div class="notification-delay"><div class="notification-label">Попереджати перед відключенням</div><div class="notification-options" role="group" aria-label="Час попередження"><button type="button" data-reminder="15">15 хв</button><button type="button" data-reminder="30">30 хв</button><button type="button" data-reminder="60">1 год</button><button type="button" data-reminder="0">Ні</button></div></div>
@@ -422,7 +435,7 @@ $('addBack').onclick=()=>showScreen('addresses');
 $('categoryBack').onclick=()=>showScreen('detail');
 function renderList(){const root=$('addressList');root.replaceChildren();store.addresses.forEach(a=>{const b=document.createElement('button');b.className='address-card'+(a.id===store.primary?' selected':'');b.style.setProperty('--address-accent',palette(a).accent);b.style.setProperty('--address-bg',palette(a).b);const left=document.createElement('span');left.className='address-icon';left.style.background=palette(a).a;left.style.color=palette(a).accent;left.innerHTML=icon(categoryIcon(a));const copy=document.createElement('span');copy.className='address-copy';const strong=document.createElement('strong');strong.textContent=title(a);const small=document.createElement('small');small.textContent=(a.kind||'Дім')+(a.id===store.primary?' · Основна адреса':'');copy.append(strong,small);const arrow=document.createElement('span');arrow.className='check';arrow.innerHTML=icon('arrow-right');b.append(left,copy,arrow);b.onclick=()=>{activeId=a.id;renderDetail();showScreen('detail')};root.append(b)});if(!store.addresses.length){const d=document.createElement('div');d.className='empty-state';d.textContent='Адрес ще немає. Додайте першу адресу, щоб налаштувати моніторинг.';root.append(d)}}
 function renderHome(){if(!active()&&store.addresses.length)activeId=store.primary||store.addresses[0].id;const a=active();renderQuick();$('currentAddress').textContent=a?title(a):'Додайте адресу';$('heroAddressLabel').textContent=a?.id===store.primary?'ОСНОВНА АДРЕСА':'ОБРАНА АДРЕСА';const hero=document.querySelector('.hero');if(hero){hero.classList.remove('hero-emergency');const power=hero.querySelector('.power');if(power){power.classList.remove('power-emergency');power.innerHTML=icon('power')}let mute=hero.querySelector('.hero-mute');if(!mute){mute=document.createElement('span');mute.className='hero-mute';mute.innerHTML=icon('bell-off')+'<span>Без сповіщень</span>';hero.querySelector('.address-button > div').append(mute)}mute.hidden=!a||a.notificationsEnabled!==false;mute.setAttribute('aria-label','Сповіщення для цієї адреси вимкнено');const theme=palette(a);hero.style.setProperty('--hero-a',theme.a);hero.style.setProperty('--hero-b',theme.b);hero.style.setProperty('--hero-accent',theme.accent);hero.querySelector('.address-button .sub').textContent='Група: не визначена · ДТЕК не підключено';hero.querySelector('.live .status').textContent='Немає даних';hero.querySelector('.power')?.classList.remove('power-off');hero.querySelector('.power')?.classList.add('power-unknown');hero.querySelector('.live .sub').textContent='Час наступної зміни невідомий';hero.querySelectorAll('.stats .stat strong').forEach(el=>el.textContent='—');hero.querySelectorAll('.stats .stat .sub').forEach(el=>el.textContent='Немає графіка');const labels=[...hero.querySelectorAll('*')];labels.forEach(el=>{if(el.children.length===0&&el.textContent&&/Світло є|Світла немає|Наступне відключення|Дані оновлено|За графіком/.test(el.textContent)){if(/Світло є|Світла немає/.test(el.textContent))el.textContent='Статус невідомий';else if(/Наступне відключення/.test(el.textContent))el.textContent='Наступна зміна невідома';else if(/Дані оновлено/.test(el.textContent))el.textContent='Дані не підключені';}})}drawDay(dayIndex)}
-function drawDay(d){dayIndex=d;const chart=$('chart');chart.replaceChildren();for(let h=0;h<24;h++){const bar=document.createElement('div');bar.className='bar unknown';bar.title=`${String(h).padStart(2,'0')}:00 — даних немає`;bar.dataset.scheduleInfo=bar.title;bar.tabIndex=0;bar.setAttribute('role','button');chart.append(bar)}document.querySelectorAll('.day').forEach(b=>b.classList.toggle('active',Number(b.dataset.day)===d));$('dayNote').textContent='Графік ДТЕК ще не підключено. Порожні години не означають наявність світла.';}
+function drawDay(d){dayIndex=d;const chart=$('chart');chart.replaceChildren();for(let i=0;i<48;i++){const bar=document.createElement('div');bar.className='bar unknown';const start=String(Math.floor(i/2)).padStart(2,'0')+':'+(i%2?'30':'00');const end=String(Math.floor((i+1)/2)).padStart(2,'0')+':'+((i+1)%2?'30':'00');bar.dataset.scheduleInfo=start+'–'+end+' · Немає даних';bar.dataset.state='unknown';bar.dataset.start=start;bar.dataset.end=end;bar.setAttribute('aria-label',bar.dataset.scheduleInfo);chart.append(bar)}document.querySelectorAll('.day').forEach(b=>b.classList.toggle('active',Number(b.dataset.day)===d));$('dayNote').textContent='Графік ДТЕК ще не підключено. Порожні години не означають наявність світла.';window.dispatchEvent(new Event('svitlo:chart-drawn'));}
 document.querySelectorAll('.day').forEach(b=>b.onclick=()=>drawDay(Number(b.dataset.day)));
 function renderDetail(){
  const a=active();if(!a)return showScreen('addresses');
@@ -599,13 +612,12 @@ renderHome=function(){oldRenderHome();const a=active();if(!a){showDtekHeroLoadin
 const oldDrawDay=drawDay;
 drawDay=function(d){oldDrawDay(d);const data=currentLive();if(!data||data.error){$('dayNote').textContent=data?.error?'Помилка завантаження ДТЕК: '+data.error:'Завантаження графіка ДТЕК…';return}
  const day=data.days?.[d];if(!day?.available){$('dayNote').textContent='ДТЕК не надав графік на цей день. Це не означає, що світло є.';return}
- const bars=$('chart').children;
- day.slots.forEach((pair,h)=>{const bar=bars[h];if(!bar)return;const states=Array.isArray(pair)?pair:['unknown','unknown'];const mixed=states[0]!==states[1];bar.className='bar '+(mixed?'':states[0]==='off'?'off':states[0]==='maybe'?'maybe':states[0]==='on'?'':'unknown');
- if(mixed){const color={on:'var(--green)',off:'var(--red)',maybe:'var(--yellow)',unknown:'#4b505c'};bar.style.background=`linear-gradient(to bottom,${color[states[0]]||color.unknown} 0 50%,${color[states[1]]||color.unknown} 50% 100%)`;}else bar.style.background='';
- bar.title=String(h).padStart(2,'0')+':00 — '+(stateLabel[states[0]]||'Немає даних')+'; :30 — '+(stateLabel[states[1]]||'Немає даних');
- bar.dataset.scheduleInfo=String(h).padStart(2,'0')+':00–'+String(h).padStart(2,'0')+':30 · '+(stateLabel[states[0]]||'Немає даних')+'\n'+String(h).padStart(2,'0')+':30–'+String(h+1).padStart(2,'0')+':00 · '+(stateLabel[states[1]]||'Немає даних');
- bar.tabIndex=0;bar.setAttribute('role','button');bar.setAttribute('aria-label',bar.dataset.scheduleInfo.replace('\n','; '));
- });
+ const bars=$('chart').querySelectorAll('.bar');
+ day.slots.forEach((pair,h)=>{const states=Array.isArray(pair)?pair:['unknown','unknown'];for(let half=0;half<2;half++){
+ const bar=bars[h*2+half];if(!bar)continue;const state=states[half]||'unknown';bar.className='bar '+(state==='off'?'off':state==='maybe'?'maybe':state==='on'?'':'unknown');bar.dataset.state=state;
+ bar.dataset.scheduleInfo=bar.dataset.start+'–'+bar.dataset.end+' · '+(stateLabel[state]||'Немає даних');bar.setAttribute('aria-label',bar.dataset.scheduleInfo);
+ }});
+ window.dispatchEvent(new Event('svitlo:chart-drawn'));
  $('dayNote').textContent='Графік ДТЕК на '+dateKyiv(day.date+'T12:00:00+02:00')+'. Дані планові, не показують фактичну наявність електрики.';
 };
 const oldRenderDetail=renderDetail;
@@ -674,41 +686,25 @@ async function checkLink(){
   const r=await fetch(API+'/api/link/status',{headers:auth()});
   if(!r.ok)throw Error('HTTP '+r.status);
   const d=await r.json();
-  if(d.linked){publishLinkState('linked');status('Підключено ✓');button.textContent='Перепідключити Telegram';if(workspaceReady)await sync();return true;}
+  if(d.linked){publishLinkState('linked');status('Підключено ✓');button.textContent='Перепідключити Telegram';await sync();return true;}
   publishLinkState('unlinked');status('Telegram не прив’язано — підключіть знову');return false;
  }catch(e){publishLinkState('unknown');status('Помилка зв’язку з сервером');return false;}
 }
-// Serialize subscription writes: an older response must never overwrite a newer switch.
-let subscriptionRevision=0,subscriptionApplied=0,subscriptionWorker=null;
 async function sync(){
- subscriptionRevision++;
- if(subscriptionWorker)return subscriptionWorker;
- subscriptionWorker=(async()=>{
-  let ok=true;
-  while(subscriptionApplied<subscriptionRevision){
-   const revision=subscriptionRevision;
-   if(!token()||window.svitloTelegramLinkState!=='linked'){ok=false;break;}
-   const s=window.svitloGetWorkspace?.();
-   if(!s){ok=false;break;}
-   const addresses=(s.addresses||[]).filter(a=>a.city&&a.street&&a.house).map(a=>({
-    id:a.id,city:a.city,street:a.street,house:a.house,
-    enabled:a.notificationsEnabled!==false,
-    reminderMinutes:[0,15,30,60].includes(s.reminderMinutes)?s.reminderMinutes:30,
-    notifyOn:s.notifications===true,
-    notifySchedule:s.scheduleNotifications!==false,
-    quietHours:s.quietHours===true
-   }));
-   try{
-    const r=await fetch(API+'/api/link/sync',{method:'POST',headers:{...auth(),'Content-Type':'application/json'},body:JSON.stringify({addresses}),cache:'no-store'});
-    if(!r.ok)throw Error('HTTP '+r.status);
-    subscriptionApplied=revision;
-   }catch(e){console.warn('Світло UA: notification settings sync failed',e);status('Не вдалося зберегти сповіщення на сервері');ok=false;break;}
-  }
-  return ok;
- })();
- try{return await subscriptionWorker}finally{subscriptionWorker=null;}
+ if(!token())return false;
+ let s;try{s=JSON.parse(localStorage.getItem('svitlo_workspace_v2')||'{}')}catch{return false}
+ const addresses=(s.addresses||[]).filter(a=>a.city&&a.street&&a.house).map(a=>({
+  id:a.id,city:a.city,street:a.street,house:a.house,
+  enabled:a.notificationsEnabled!==false,
+  reminderMinutes:s.reminderMinutes??0,notifyOn:s.notifications===true,
+  notifySchedule:s.scheduleNotifications===true,quietHours:s.quietHours===true
+ }));
+ try{
+  const r=await fetch(API+'/api/link/sync',{method:'POST',headers:{...auth(),'Content-Type':'application/json'},body:JSON.stringify({addresses})});
+  if(!r.ok){const body=await r.json().catch(()=>({}));throw Error(body.error||'HTTP '+r.status);}
+  return true;
+ }catch(e){status('Не вдалося синхронізувати адреси');return false;}
 }
-
 button.addEventListener('click',async()=>{
  try{
   status('Створюємо посилання…');
@@ -784,7 +780,7 @@ window.addEventListener('focus',()=>{if(workspaceReady&&!workspaceBusy)pullWorks
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&workspaceReady&&!workspaceBusy)pullWorkspace(false)});
 // Updates address list/preferences on the server after local changes.
 window.addEventListener('storage',e=>{if(e.key==='svitlo_workspace_v2')sync()});
-window.addEventListener('svitlo:workspace-updated',()=>{if(!workspaceReady&&window.svitloTelegramLinkState==='linked')sync()});
+window.addEventListener('svitlo:workspace-updated',()=>{sync()});
 checkLink();
 })();
 </script>
@@ -914,56 +910,24 @@ checkLink();
 <script>
 (()=>{
  const chart=document.getElementById('chart');if(!chart)return;
- const tip=document.createElement('div');tip.className='chart-tooltip';tip.hidden=true;
- chart.appendChild(tip);
- let chosen=null,hideTimer=null;
- let lastBarSoundAt=0;
- function cancelHide(){if(hideTimer!==null){clearTimeout(hideTimer);hideTimer=null;}}
- function clear(){cancelHide();if(chosen)chosen.classList.remove('bar-selected');chosen=null;tip.hidden=true;}
- function hideSoon(delay=250){cancelHide();hideTimer=setTimeout(()=>{hideTimer=null;clear();},delay);}
- function select(bar){
-  if(!bar||!bar.classList.contains('bar'))return;
-  cancelHide();
-  const isNew=chosen!==bar;
-  if(chosen&&isNew)chosen.classList.remove('bar-selected');
-  chosen=bar;bar.classList.add('bar-selected');
-  if(isNew&&performance.now()-lastBarSoundAt>85){lastBarSoundAt=performance.now();window.svitloPlayUiSound?.('chart');window.svitloHaptic?.('chart');}
-  const label=bar.dataset.scheduleInfo||bar.getAttribute('title')||'Немає даних';
-  // Prevent the browser's native tooltip from covering our own.
-  if(bar.hasAttribute('title')){bar.dataset.originalTitle=bar.getAttribute('title');bar.removeAttribute('title');}
-  tip.textContent=label;tip.hidden=false;
-  const chartBox=chart.getBoundingClientRect(),barBox=bar.getBoundingClientRect();
-  const x=barBox.left+barBox.width/2-chartBox.left;
-  tip.style.left=Math.max(85,Math.min(chartBox.width-85,x))+'px';
+ function drawOutageTimes(){
+  chart.querySelectorAll('.chart-boundary').forEach(el=>el.remove());
+  const bars=[...chart.querySelectorAll('.bar')];if(bars.length!==48)return;
+  const states=bars.map(el=>el.dataset.state||'unknown');
+  const boundaries=[];
+  for(let i=0;i<=48;i++){
+   const before=i>0?states[i-1]:null,after=i<48?states[i]:null;
+   if((after==='off'&&before!=='off')||(before==='off'&&after!=='off'))boundaries.push(i);
+  }
+  boundaries.forEach(i=>{
+   const h=String(Math.floor(i/2)).padStart(2,'0');const m=i%2?'30':'00';
+   const el=document.createElement('div');el.className='chart-boundary'+(i===0?' edge-left':i===48?' edge-right':'');
+   el.style.left=(i/48*100)+'%';
+   const time=document.createElement('span');time.textContent=h+':'+m;el.append(time);chart.append(el);
+  });
  }
- chart.addEventListener('pointerover',e=>{if(e.pointerType==='mouse'){const bar=e.target.closest('.bar');if(bar)select(bar);}});
- chart.addEventListener('pointerout',e=>{if(e.pointerType==='mouse'&&!chart.contains(e.relatedTarget))hideSoon(250)});
- chart.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'){const bar=e.target.closest('.bar');if(bar&&bar!==chosen)select(bar);}});
- // On phones, track the bar under the finger, not just the initial touch target.
- let fingerTracking=false;
- function barAtTouch(touch){
-  const hit=document.elementFromPoint(touch.clientX,touch.clientY);
-  const bar=hit?.closest?.('.bar');
-  return bar&&chart.contains(bar)?bar:null;
- }
- chart.addEventListener('touchstart',e=>{
-  if(!e.touches.length)return;
-  const bar=barAtTouch(e.touches[0]);
-  if(bar){fingerTracking=true;select(bar);}
- },{passive:true});
- chart.addEventListener('touchmove',e=>{
-  if(!fingerTracking||!e.touches.length)return;
-  const bar=barAtTouch(e.touches[0]);
-  if(bar&&bar!==chosen)select(bar);
- },{passive:true});
- function finishFinger(){if(fingerTracking){fingerTracking=false;hideSoon(2000);}}
- chart.addEventListener('touchend',finishFinger,{passive:true});
- chart.addEventListener('touchcancel',finishFinger,{passive:true});
- chart.addEventListener('click',e=>{const bar=e.target.closest('.bar');if(!bar)return;if(!fingerTracking){select(bar);if(!window.matchMedia('(hover: hover)').matches)hideSoon(2000)}});
- chart.addEventListener('focusin',e=>{const bar=e.target.closest('.bar');if(bar)select(bar)});
- chart.addEventListener('focusout',e=>{if(!chart.contains(e.relatedTarget))hideSoon(250)});
- document.addEventListener('pointerdown',e=>{if(!chart.contains(e.target))clear()});
- new MutationObserver(()=>{if(chosen&&!chosen.isConnected)clear();if(!tip.isConnected)chart.append(tip)}).observe(chart,{childList:true});
+ window.addEventListener('svitlo:chart-drawn',drawOutageTimes);
+ drawOutageTimes();
 })();
 </script>
 <div id="energyGame" hidden role="dialog" aria-modal="true" aria-labelledby="egTitle"><div class="eg-shell"><div class="eg-head"><div><div class="eg-kicker">⚡ СЕКРЕТНИЙ РЕЖИМ</div><h2 id="egTitle">Енергомережа</h2></div><button id="egClose" class="eg-close" type="button" aria-label="Закрити гру">✕</button></div><p class="eg-desc">Поверни дроти так, щоб струм від ⚡ станції дістався до всіх 🏠 будинків. Торкайся плиток, щоб обертати їх.</p><div class="eg-stats"><div class="eg-stat"><strong id="egLevel">1</strong><small>Рівень</small></div><div class="eg-stat"><strong id="egHouses">0/0</strong><small>Будинки зі світлом</small></div><div class="eg-stat"><strong id="egMoves">0</strong><small>Повороти</small></div></div><div class="eg-grid" id="egGrid" aria-label="Ігрове поле"></div><div class="eg-message" id="egMessage" aria-live="polite"></div><div class="eg-bottom"><button type="button" class="eg-action" id="egRestart">↻ Спочатку</button><button type="button" class="eg-action primary" id="egNext" hidden>Далі →</button></div><p class="eg-help">Гра працює без сервера. Рекорд рівня зберігається у цьому браузері.</p></div></div><script>
