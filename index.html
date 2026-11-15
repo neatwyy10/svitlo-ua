@@ -337,7 +337,7 @@ body.welcome-lock{overflow:hidden}
 /* Large, fully diffused ambient light behind the card content. */
 .hero,.card-design-preview{isolation:isolate;overflow:hidden}
 .hero>*:not(.card-floating-orb),.card-design-preview>*:not(.card-floating-orb){position:relative;z-index:2}
-.card-floating-orb{position:absolute!important;left:0;top:0;z-index:0!important;width:var(--orb-size,220px);height:var(--orb-size,220px);border-radius:50%;background:radial-gradient(circle at center,color-mix(in srgb,var(--orb-color,#f5c84c),transparent 38%) 0%,color-mix(in srgb,var(--orb-color,#f5c84c),transparent 66%) 36%,transparent 73%);filter:blur(calc(var(--orb-size,220px) * .28));opacity:.8;pointer-events:none;animation:cardOrbFloat var(--orb-speed,18s) ease-in-out infinite alternate;will-change:transform}
+.card-floating-orb{position:absolute!important;left:0;top:0;z-index:0!important;width:var(--orb-size,220px);height:var(--orb-size,220px);border-radius:50%;background:radial-gradient(circle at center,color-mix(in srgb,var(--orb-color,#ffffff),transparent 62%) 0%,color-mix(in srgb,var(--orb-color,#ffffff),transparent 82%) 40%,transparent 76%);filter:blur(calc(var(--orb-size,220px) * .43));opacity:.56;pointer-events:none;animation:cardOrbFloat var(--orb-speed,18s) ease-in-out infinite alternate;will-change:transform}
 .card-floating-orb[hidden]{display:none!important}
 @keyframes cardOrbFloat{0%{transform:translate(-25%,-24%)}33%{transform:translate(52%,5%)}67%{transform:translate(17%,68%)}100%{transform:translate(-28%,35%)}}
 .card-design-preview .card-floating-orb{z-index:0!important}
@@ -384,13 +384,7 @@ body.welcome-lock{overflow:hidden}
 </div></div>
 <div class="card-theme-panel"><h3>Колір картки</h3><p>Оберіть палітру або власний колір.</p><div class="card-theme-grid" id="cardThemeGrid" role="group" aria-label="Колір картки адреси"></div>
 <label class="form-field">Власний колір <input type="color" id="cardDesignColor" value="#273343" style="height:48px;padding:5px;cursor:pointer"></label>
-<div class="card-orb-settings"><h3>Фонове світіння</h3><p>Велика розмита кольорова пляма повільно рухається під вмістом картки.</p>
-<label class="card-orb-switch"><span>Увімкнути світіння</span><input id="cardOrbEnabled" type="checkbox" checked role="switch" aria-label="Увімкнути світіння"><span class="card-orb-toggle" aria-hidden="true"></span></label>
-<div class="card-orb-controls">
-<label class="card-orb-color-row" for="cardOrbColor"><span>Колір світіння</span><input id="cardOrbColor" type="color" value="#f5c84c" aria-label="Колір світіння"></label>
-<div class="card-orb-control"><div class="card-orb-control-head"><label for="cardOrbSize">Розмір світіння</label><output id="cardOrbSizeValue" for="cardOrbSize">220 px</output></div><input id="cardOrbSize" type="range" min="120" max="360" step="10" value="220"></div>
-<div class="card-orb-control"><div class="card-orb-control-head"><label for="cardOrbSpeed">Швидкість руху</label><output id="cardOrbSpeedValue" for="cardOrbSpeed">18 с</output></div><input id="cardOrbSpeed" type="range" min="8" max="40" value="18"></div>
-</div></div>
+<div class="card-orb-settings"><label class="card-orb-switch"><span>Анімація</span><input id="cardOrbEnabled" type="checkbox" checked role="switch" aria-label="Анімація"><span class="card-orb-toggle" aria-hidden="true"></span></label></div>
 <button type="button" class="card-theme-reset" id="cardThemeReset">Скинути до стандартного</button></div>
 <button type="button" class="primary" id="cardDesignDone">Зберегти та повернутися</button>
 </section>
@@ -534,7 +528,7 @@ function applyCardOrb(container,a){
  let orb=container.querySelector(':scope > .card-floating-orb');
  if(!orb){orb=document.createElement('span');orb.className='card-floating-orb';orb.setAttribute('aria-hidden','true');container.prepend(orb)}
  orb.hidden=a?.cardOrbEnabled===false;
- orb.style.setProperty('--orb-color',/^#[0-9a-f]{6}$/i.test(a?.cardOrbColor||'')?a.cardOrbColor:'#f5c84c');
+ orb.style.setProperty('--orb-color',/^#[0-9a-f]{6}$/i.test(a?.cardOrbColor||'')?a.cardOrbColor:'#ffffff');
  orb.style.setProperty('--orb-size',Math.max(120,Math.min(360,Number(a?.cardOrbSize)||220))+'px');
  orb.style.setProperty('--orb-speed',Math.max(8,Math.min(40,Number(a?.cardOrbSpeed)||18))+'s');
 }
@@ -550,20 +544,13 @@ function renderCardDesign(){
  $('cardDesignColor').value=a.cardDesignColor||t.a;
  applyCardOrb(preview,a);
  $('cardOrbEnabled').checked=a.cardOrbEnabled!==false;
- $('cardOrbColor').value=a.cardOrbColor||'#f5c84c';
- $('cardOrbSize').value=(Number(a.cardOrbSize)>=120? a.cardOrbSize:220);
- $('cardOrbSpeed').value=a.cardOrbSpeed||18;
- $('cardOrbSizeValue').textContent=$('cardOrbSize').value+' px';
- $('cardOrbSpeedValue').textContent=$('cardOrbSpeed').value+' с';
  document.querySelectorAll('[data-design-mode]').forEach(b=>b.setAttribute('aria-pressed',String((a.cardDesignMode||'classic')===b.dataset.designMode)));
  renderCardThemePicker();
 }
 $('openCardDesign').onclick=()=>{renderCardDesign();showScreen('cardDesign')};
 $('cardDesignDone').onclick=()=>{renderDetail();showScreen('detail')};
 document.querySelectorAll('[data-design-mode]').forEach(b=>b.onclick=()=>{const a=active();if(!a)return;a.cardDesignMode=b.dataset.designMode;persist();renderCardDesign();renderHome();renderList();window.svitloPlayUiSound?.('tap');window.svitloHaptic?.('tap')});
-for(const [id,key,parse] of [['cardOrbEnabled','cardOrbEnabled',v=>v],['cardOrbColor','cardOrbColor',v=>v],['cardOrbSize','cardOrbSize',v=>Number(v)],['cardOrbSpeed','cardOrbSpeed',v=>Number(v)]]){
- $(id).addEventListener('input',e=>{const a=active();if(!a)return;a[key]=id==='cardOrbEnabled'?e.target.checked:parse(e.target.value);persist();renderCardDesign();applyCardOrb(document.querySelector('.hero'),a)});
-}
+$('cardOrbEnabled').addEventListener('change',e=>{const a=active();if(!a)return;a.cardOrbEnabled=e.target.checked;persist();renderCardDesign();applyCardOrb(document.querySelector('.hero'),a);window.svitloPlayUiSound?.('tap');window.svitloHaptic?.('tap')});
 $('cardDesignColor').addEventListener('input',e=>{const a=active();if(!a)return;a.cardDesignColor=e.target.value;persist();renderCardDesign();renderHome();renderList()});
 function renderCardThemePicker(){
  const a=active(),grid=$('cardThemeGrid');if(!a||!grid)return;
