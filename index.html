@@ -603,7 +603,16 @@ $('deckPrev').onclick=()=>deckMove(-1);$('deckNext').onclick=()=>deckMove(1);
 (()=>{
  const deck=deckEl;
  let g=null,suppress=false;
- const start=(x,y,id)=>{if(store.addresses.length<2||deckBusy)return;g={x,y,id,lastX:x,lastTime:performance.now(),velocity:0,axis:null};};
+ // Tactile 'coin edge': one tiny tick per horizontal ridge, throttled for mobile.
+ const ridgeSize=13, ridgeCooldown=38;
+ function swipeTick(){
+  try{
+   const tg=window.Telegram?.WebApp;
+   if(tg?.initData && tg.HapticFeedback?.selectionChanged){tg.HapticFeedback.selectionChanged();return;}
+   if(typeof navigator.vibrate==='function')navigator.vibrate(5);
+  }catch{}
+ }
+ const start=(x,y,id)=>{if(store.addresses.length<2||deckBusy)return;g={x,y,id,lastX:x,lastTime:performance.now(),velocity:0,axis:null,lastRidge:0,lastTickAt:0};};
  const move=(x,y)=>{
   if(!g||deckBusy)return false;
   const dx=x-g.x,dy=y-g.y;
@@ -614,6 +623,11 @@ $('deckPrev').onclick=()=>deckMove(-1);$('deckNext').onclick=()=>deckMove(1);
   }
   if(g.axis!=='horizontal')return false;
   const now=performance.now();g.velocity=(x-g.lastX)/Math.max(1,now-g.lastTime);g.lastX=x;g.lastTime=now;
+  const ridge=Math.floor(Math.abs(dx)/ridgeSize);
+  if(ridge!==g.lastRidge){
+   g.lastRidge=ridge;
+   if(ridge>0 && now-g.lastTickAt>=ridgeCooldown){g.lastTickAt=now;swipeTick();}
+  }
   const offset=Math.max(-180,Math.min(180,dx));
   deckHero.style.transition='none';deckHero.style.transform=`translate3d(${offset}px,0,0)`;
   deck.style.setProperty('--drag-shift',String(Math.min(1,Math.abs(offset)/110)));
