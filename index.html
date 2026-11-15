@@ -1019,12 +1019,18 @@ renderHome();renderList();drawDay(0);persist();
 window.svitloAlignHome=function(behavior='instant'){
  const home=document.getElementById('home');
  if(!home||home.classList.contains('hidden'))return;
- const heading=home.querySelector('h1');
- if(!heading)return;
- // Place the heading just below Telegram's top overlay; quick address cards stay visible.
- const topInset=window.innerWidth<=700?68:24;
- const top=Math.max(0,window.scrollY+heading.getBoundingClientRect().top-topInset);
- window.scrollTo({top,behavior});
+ const hero=home.querySelector('.hero');
+ if(!hero)return;
+ // Center the address status card in the visible viewport on entry.
+ const viewport=window.visualViewport;
+ const visibleHeight=viewport?.height||window.innerHeight;
+ const visibleTop=viewport?.offsetTop||0;
+ const rect=hero.getBoundingClientRect();
+ const heroCenter=rect.top+rect.height/2;
+ const viewportCenter=visibleTop+visibleHeight/2;
+ const maxScroll=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
+ const target=Math.max(0,Math.min(maxScroll,window.scrollY+heroCenter-viewportCenter));
+ window.scrollTo({top:target,behavior});
 };
 /* Opening animation: hero takes the full viewport, then gently reveals the address selector. */
 (()=>{
@@ -1038,7 +1044,7 @@ window.svitloAlignHome=function(behavior='instant'){
   if(home&&!home.classList.contains('hidden')){
    window.svitloAlignHome?.(reduced?'instant':'smooth');
   }
-  setTimeout(()=>{splash.remove();window.svitloIntroFinished=true;window.dispatchEvent(new Event('svitlo:intro-finished'));},reduced?40:620);
+  setTimeout(()=>{splash.remove();window.svitloAlignHome?.('instant');window.svitloIntroFinished=true;window.dispatchEvent(new Event('svitlo:intro-finished'));},reduced?40:620);
  }
  const delay=reduced?90:1700;
  setTimeout(finish,delay);
