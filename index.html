@@ -1450,7 +1450,13 @@ $('egRestart').onclick=()=>{audio(480,.07,.012);newLevel()};$('egNext').onclick=
  const updateBadge=()=>{badge.hidden=!releases.some(r=>!seen().includes(r.id))};
  async function load(){try{const res=await fetch(BASE+'/api/releases',{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const data=await res.json();releases=Array.isArray(data.releases)&&data.releases.length?data.releases:[starterRelease];updateBadge()}catch(e){releases=[starterRelease];updateBadge();console.warn('Release notes unavailable',e)}}
  function render(){root.replaceChildren();if(!releases.length){const empty=document.createElement('p');empty.className='sub';empty.textContent='Поки немає опублікованих оновлень.';root.append(empty);return}for(const release of releases){const card=document.createElement('article');card.className='whats-new-card';const meta=document.createElement('div');meta.className='whats-new-meta';const date=document.createElement('time');date.textContent=new Date(release.created_at*1000).toLocaleDateString('uk-UA');meta.append(date);const title=document.createElement('h2');title.textContent=release.title+(release.version?' · '+release.version:'');card.append(meta,title);for(const item of release.items||[]){const section=document.createElement('div');section.className='release-public-item';const heading=document.createElement('h3');heading.textContent=item.title;const description=document.createElement('p');description.textContent=item.description;section.append(heading,description);if(item.images?.length){const gallery=document.createElement('div');gallery.className='release-public-gallery';for(const url of item.images){if(!/^\/api\/releases\/media\/[a-f0-9]{32}\.(png|jpg|webp|gif)$/.test(url))continue;const img=document.createElement('img');img.src=BASE+url;img.loading='lazy';img.alt=item.title;gallery.append(img)}section.append(gallery)}card.append(section)}root.append(card)}}
- document.getElementById('openWhatsNew').addEventListener('click',async()=>{await load();render();showScreen('whatsNew');try{localStorage.setItem(key,JSON.stringify([...new Set([...seen(),...releases.map(r=>r.id)])]))}catch{}updateBadge()});
- document.getElementById('whatsNewBack').addEventListener('click',()=>showScreen('settings'));load();document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
+ document.getElementById('openWhatsNew').addEventListener('click',()=>{
+  window.show('whatsNew');
+  render();
+  const markRead=()=>{try{localStorage.setItem(key,JSON.stringify([...new Set([...seen(),...releases.map(r=>r.id)])]))}catch{}updateBadge()};
+  markRead();
+  load().then(()=>{render();markRead()});
+ });
+ document.getElementById('whatsNewBack').addEventListener('click',()=>window.show('settings'));load();document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
 })();
 </script></body></html>
