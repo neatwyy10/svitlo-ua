@@ -416,7 +416,7 @@ body.welcome-lock{overflow:hidden}
 </style><style id="address-reordering">
 .address-sort-row{display:flex;align-items:stretch;gap:8px;margin-top:11px;min-width:0;position:relative;transition:box-shadow .18s}
 .address-sort-row .address-card{margin-top:0;min-width:0;flex:1;width:auto}
-.address-drag-handle{display:grid;place-items:center;width:42px;flex:none;border-radius:13px;background:#242932;border:1px solid #3b414d;color:#aeb6c3;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.address-drag-handle{overscroll-behavior:contain;-webkit-touch-callout:none;display:grid;place-items:center;width:42px;flex:none;border-radius:13px;background:#242932;border:1px solid #3b414d;color:#aeb6c3;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
 .address-drag-handle span{font-size:24px;line-height:1;transform:rotate(90deg);font-weight:700;letter-spacing:1px}
 .address-sort-row.is-dragging{filter:drop-shadow(0 12px 16px #0008);transition:none;will-change:transform}
 .address-sort-row.is-dragging .address-drag-handle{cursor:grabbing;color:var(--yellow);border-color:var(--yellow)}
@@ -681,12 +681,22 @@ $('addBack').onclick=()=>showScreen('addresses');
 $('categoryBack').onclick=()=>showScreen('detail');
 function enableAddressDrag(handle,row,root){
  let drag=null;
- handle.addEventListener('pointerdown',e=>{
+ // Capture touch gestures on the handle without letting the page scroll.
+ const stopTouchScroll=e=>{if(drag&&e.cancelable)e.preventDefault()};
+ handle.addEventListener('touchmove',stopTouchScroll,{passive:false});
+ const lockScroll=()=>{
+  const y=window.scrollY;
+  const prev={position:document.body.style.position,top:document.body.style.top,left:document.body.style.left,right:document.body.style.right,width:document.body.style.width,overflow:document.body.style.overflow};
+  document.body.style.position='fixed';document.body.style.top=-y+'px';document.body.style.left='0';document.body.style.right='0';document.body.style.width='100%';document.body.style.overflow='hidden';
+  return ()=>{Object.assign(document.body.style,prev);window.scrollTo(0,y)};
+ };
+ handle.addEventListener('pointerdown' ,e=>{
   if(e.button!==0&&e.pointerType==='mouse')return;
   e.preventDefault();
   const rect=row.getBoundingClientRect();
   drag={id:e.pointerId,startY:e.clientY,offset:e.clientY-rect.top,initialIndex:[...root.children].indexOf(row),lastY:e.clientY};
-  handle.setPointerCapture(e.pointerId);
+  drag.unlockScroll=lockScroll();
+  try{handle.setPointerCapture(e.pointerId)}catch(_e){}
   row.classList.add('is-dragging');
   row.style.height=rect.height+'px';
   row.style.zIndex='15';
@@ -707,7 +717,8 @@ function enableAddressDrag(handle,row,root){
  });
  const finish=e=>{
   if(!drag||drag.id!==e.pointerId)return;
-  const initial=drag.initialIndex;drag=null;
+  const unlock=drag.unlockScroll;drag=null;
+  unlock?.();
   row.classList.remove('is-dragging');row.style.transform='';row.style.height='';row.style.zIndex='';
   const ids=[...root.querySelectorAll('.address-sort-row')].map(el=>el.dataset.addressId);
   const original=new Map(store.addresses.map(a=>[String(a.id),a]));
