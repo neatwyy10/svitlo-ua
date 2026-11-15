@@ -301,6 +301,25 @@ body.welcome-lock{overflow:hidden}
 .chart-boundary.edge-left{transform:translateX(0)}.chart-boundary.edge-right{transform:translateX(-100%)}
 .chart-boundary.edge-left:after{left:0}.chart-boundary.edge-right:after{right:0}
 .chart-tooltip,.chart-selection,.chart .now-marker{display:none!important}
+
+/* Interactive unified 24-hour timeline */
+.chart{height:60px!important;display:grid!important;grid-template-columns:repeat(48,minmax(0,1fr))!important;gap:0!important;overflow:visible!important;position:relative!important;margin-top:35px}
+.chart .bar{height:58px!important;min-height:58px!important;border-radius:0!important;animation:none!important;opacity:1!important;transform:none!important;filter:none!important;box-shadow:none!important;cursor:pointer!important;pointer-events:auto!important;position:relative;z-index:1;touch-action:manipulation}
+.chart .bar:first-child{border-radius:8px 0 0 8px!important}.chart .bar:nth-child(48){border-radius:0 8px 8px 0!important}
+.chart .bar.timeline-selected{z-index:3!important;transform:scaleY(1.28)!important;filter:brightness(1.18)!important;box-shadow:0 5px 18px #0007!important}
+.chart .bar:focus-visible{outline:2px solid #fff!important;outline-offset:2px!important;z-index:4}
+.chart .bar:hover:not(.timeline-selected){filter:brightness(1.07)!important}
+.chart-boundary{display:none!important}
+.timeline-popup{position:absolute;top:112px;z-index:9;transform:translateX(-50%);padding:9px 12px;border-radius:11px;border:1px solid #4b5360;background:#272c36;color:#f7f8fa;font-size:12px;font-weight:700;white-space:nowrap;box-shadow:0 8px 25px #0008;pointer-events:none;max-width:calc(100% - 10px);text-align:center}
+.timeline-popup[hidden],.timeline-details[hidden]{display:none!important}
+.timeline-expand{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin:18px 0 0;padding:13px 15px;background:#242831;border:1px solid #3a414e;border-radius:13px;color:#f4f5f8;font-size:12px;font-weight:750;text-align:left}
+.timeline-chevron{font-size:21px;line-height:12px;color:#f5c84c}
+.timeline-details{margin-top:10px;padding:11px;background:#101319;border:1px solid #323843;border-radius:17px;display:grid;gap:9px}
+.timeline-detail-item{display:flex;align-items:center;gap:12px;padding:12px 11px;border:1px solid #373b46;border-radius:13px;background:#1c2028}
+.timeline-detail-badge{display:grid;place-items:center;flex:none;width:33px;height:33px;border-radius:10px;background:#fb7b8122;color:#fb9ca1;font-size:12px;font-weight:800}
+.timeline-detail-badge.possible{background:#f5c84c20;color:#f5c84c}
+.timeline-detail-copy{flex:1;min-width:0}.timeline-detail-copy strong{display:block;color:#f4f6f9;font-size:13px;font-variant-numeric:tabular-nums}.timeline-detail-copy small{display:block;margin-top:5px;color:#a6acb9;font-size:11px}
+.timeline-detail-duration{font-size:11px;color:#c6cbd5;white-space:nowrap}.timeline-empty{padding:14px 7px;color:#aeb4c0;font-size:12px;line-height:1.5}
 </style></head><body><div id="welcomeIntro" class="welcome-intro" role="presentation" aria-hidden="true"><div class="welcome-content"><div class="welcome-brand"><div class="welcome-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-9 12h7l-1 8 10-12h-7V2Z"/></svg></div><span>Світло <span style="color:#f5c84c">UA</span></span></div><div class="welcome-kicker">ВАШ ПРОСТІР. ВАШ КОНТРОЛЬ.</div><h2>Світло під<br>контролем<span style="color:#f5c84c">.</span></h2><p>Усе важливе про відключення — в одному місці.</p></div></div><main class="app"><header class="top"><div class="brand"><div class="mark" data-icon="bolt"></div><span>Світло <span style="color:var(--yellow)">UA</span></span></div><button type="button" class="avatar settings-trigger" id="openSettings" aria-label="Налаштування" data-icon="settings"></button></header><section id="home" class="screen"><div class="eyebrow">ВАШ ПРОСТІР. ВАШ КОНТРОЛЬ.</div><h1>Світло під<br>контролем<span style="color:var(--yellow)">.</span></h1><p class="sub">Усе важливе про відключення — в одному місці.</p><div class="quick-head"><span>ШВИДКИЙ ВИБІР АДРЕСИ</span><span id="quickCounter"></span></div><div id="quickAddresses" class="quick-addresses" aria-label="Швидке перемикання адрес"></div><button type="button" class="manage-addresses" id="manageAddresses"><span data-icon="sliders"></span> Керувати адресами <span data-icon="arrow-right"></span></button><article class="hero"><button class="address-button" id="addressPicker"><div><div class="eyebrow" id="heroAddressLabel">ОБРАНА АДРЕСА</div><div class="address-title" id="currentAddress">Додайте адресу</div><div class="sub" style="font-size:12px">Додайте адресу, щоб побачити графік ДТЕК</div></div><span class="hero-address-settings" data-icon="settings" aria-hidden="true"></span></button><div class="divider"></div><div class="live"><div class="power" data-icon="power"></div><div><div class="eyebrow">ЗАРАЗ ЗА ГРАФІКОМ</div><div class="status">Світло є</div><div class="sub" style="font-size:12px">До відключення: 2 год 15 хв</div></div></div><div class="stats"><div class="stat"><div class="stathead"><span data-icon="clock"></span>Наступне вимкнення</div><strong>18:00</strong><div class="sub" style="font-size:11px">Сьогодні</div></div><div class="stat"><div class="stathead"><span data-icon="moon"></span>Без світла за добу</div><strong>5 год</strong><div class="sub" style="font-size:11px">За планом</div></div></div></article><div class="section-title"><h2>Графік відключень</h2><span class="sub">24 години</span></div><article class="schedule"><div class="days"><button class="day active" data-day="0">Сьогодні</button><button class="day" data-day="1">Завтра</button><button class="day" data-day="2">Післязавтра</button></div><div class="chart" id="chart"></div><div class="axis"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div><div class="legend"><span><i class="dot" style="background:var(--green)"></i>Є світло</span><span><i class="dot" style="background:var(--red)"></i>Немає</span><span><i class="dot" style="background:var(--yellow)"></i>Можливо</span><span><i class="dot" style="background:#4b505c"></i>Немає даних</span></div><div class="note"><span data-icon="info"></span><span id="dayNote">Додайте адресу з довідника ДТЕК, щоб побачити графік.</span></div></article><div class="footnote">Дані графіка надходять від ДТЕК. Фактичний стан електропостачання може відрізнятися від планового.</div></section><section id="addresses" class="screen hidden"><div class="eyebrow">КЕРУВАННЯ ЛОКАЦІЯМИ</div><h1>Мої адреси<span style="color:var(--yellow)">.</span></h1><p class="sub">Зберігайте важливі місця та швидко переглядайте графіки.</p><div id="addressList" style="margin-top:26px"></div><button class="primary" id="addBtn"><span data-icon="plus"></span>Додати адресу</button><div class="form hidden" id="addForm"><label for="newAddr">Вулиця та номер будинку</label><input id="newAddr" placeholder="Наприклад, просп. Дмитра Яворницького, 1" maxlength="120"><button class="primary" id="saveAddr">Зберегти адресу</button><button class="softbtn" id="cancelAdd" style="width:100%">Скасувати</button></div><p class="footnote">Адреси зберігаються у цьому браузері. Експортуйте їх у налаштуваннях, щоб мати резервну копію.</p></section><section id="help" class="screen hidden"><div class="eyebrow">ЗАВЖДИ ПОРУЧ</div><h1>Допомога<span style="color:var(--yellow)">.</span></h1><p class="sub">Коротко про те, як працює Світло UA.</p><article class="help-card"><div class="help-icon" data-icon="help-circle"></div><h2 style="margin-top:19px">Як користуватися?</h2><p>Додайте адресу в розділі «Мої адреси». Оберіть її, щоб побачити інформацію на головному екрані.</p><p>Графіки завантажуються з ДТЕК через наш сервер. Сповіщення надходять у Telegram після підключення бота.</p></article><article class="help-card"><h2>Навчання по застосунку</h2><p>Хочете ще раз пройти всі можливості Світло UA? Запустіть покрокову екскурсію з підсвічуванням елементів.</p><div class="tour-mode-buttons"><button type="button" class="primary" id="startQuickTour">⚡ Швидке навчання · 4 кроки</button><button type="button" class="softbtn" id="startShortTour">✨ Коротке навчання · 8 кроків</button><button type="button" class="softbtn" id="restartGuidedTour">🎓 Повне навчання · 17 кроків</button></div></article><article class="help-card"><div class="row"><h2>Про застосунок</h2><span class="tag">WEB</span></div><p>Світло UA — незалежний вебзастосунок для перегляду планових графіків ДТЕК за обраною адресою.</p></article></section><section id="settings" class="screen hidden"><div class="eyebrow">ПЕРСОНАЛІЗАЦІЯ</div><h1>Налаштування<span style="color:var(--yellow)">.</span></h1><p class="sub">Налаштуйте застосунок під себе.</p><article class="settings-panel"><div class="settings-row"><div class="settings-icon" data-icon="volume"></div><div class="settings-copy"><strong>Звуки інтерфейсу</strong><small>Легкі звуки під час взаємодії</small></div><button type="button" id="soundToggle" class="ios-switch" role="switch" aria-label="Звуки інтерфейсу" aria-checked="true"><span></span></button></div><div class="volume-control" id="volumeControl"><div class="volume-head"><label for="soundVolume">Гучність звуків</label><strong id="soundVolumeValue">100%</strong></div><div class="volume-slider-wrap"><input id="soundVolume" type="range" min="50" max="150" step="1" value="100" aria-label="Гучність звуків"><span class="volume-center-mark" aria-hidden="true"></span></div><div class="volume-labels"><span>50%</span><span>100% · стандарт</span><span>150%</span></div></div></article><article class="settings-panel notification-panel" aria-label="Налаштування сповіщень">
 <div class="notification-heading"><span class="notification-heading-icon" data-icon="bell"></span><div><strong>Сповіщення про світло</strong><small>Налаштуйте, коли отримувати повідомлення</small></div></div>
 <div class="notification-delay"><div class="notification-label">Попереджати перед відключенням</div><div class="notification-options" role="group" aria-label="Час попередження"><button type="button" data-reminder="15">15 хв</button><button type="button" data-reminder="30">30 хв</button><button type="button" data-reminder="60">1 год</button><button type="button" data-reminder="0">Ні</button></div></div>
@@ -840,7 +859,7 @@ checkLink();
   {tab:'home',selector:'#home .hero .address-button',fallback:'#home .hero',title:'Деталі адреси',description:'Натисніть на адресу або значок керування, щоб переглянути її параметри та перейти до редагування.'},
   {tab:'home',selector:'#home .hero .live',fallback:'#home .hero',title:'Статус електропостачання',description:'Зелений означає світло за даними графіка, червоний — відключення. Аварійні роботи відображаються окремим попередженням.'},
   {tab:'home',selector:'#home .hero .stats',fallback:'#home .hero',title:'Найближчі події',description:'Картки під статусом показують важливі години та інші дані про електропостачання.'},
-  {tab:'home',selector:'#home .schedule',title:'Графік відключень',description:'Кольорові стовпчики показують стан світла протягом доби. Натисніть або проведіть пальцем по стовпчику, щоб побачити час.'},
+  {tab:'home',selector:'#home .schedule',title:'Графік відключень',description:'Суцільна шкала показує стан світла протягом доби. Натисніть на ділянку, щоб побачити час, або відкрийте повний графік.'},
   {tab:'home',selector:'#home .days',fallback:'#home .schedule',title:'Перемикання днів',description:'Переглядайте графік на сьогодні, завтра та післязавтра. Якщо ДТЕК ще не опублікував дані, застосунок про це повідомить.'},
   {tab:'home',selector:'.nav',title:'Нижнє меню',description:'Через це меню можна швидко перейти на головну, до налаштувань або в розділ допомоги.'},
   {tab:'settings',selector:'#settings h1',title:'Налаштування',description:'Тут ви керуєте звуками, Telegram-сповіщеннями, підключенням бота та іншими параметрами.'},
@@ -910,24 +929,65 @@ checkLink();
 <script>
 (()=>{
  const chart=document.getElementById('chart');if(!chart)return;
- function drawOutageTimes(){
-  chart.querySelectorAll('.chart-boundary').forEach(el=>el.remove());
+ const schedule=chart.closest('.schedule');
+ const axis=chart.nextElementSibling;
+ const toggle=document.createElement('button');toggle.type='button';toggle.className='timeline-expand';toggle.setAttribute('aria-expanded','false');toggle.innerHTML='<span>Повний графік відключень</span>';
+ const details=document.createElement('div');details.className='timeline-details';details.hidden=true;details.id='timelineDetails';
+ toggle.setAttribute('aria-controls','timelineDetails');
+ axis.insertAdjacentElement('afterend',toggle);toggle.insertAdjacentElement('afterend',details);
+ const popup=document.createElement('div');popup.className='timeline-popup';popup.hidden=true;
+ chart.insertAdjacentElement('beforebegin',popup);
+ let segments=[],selected=null;
+ const labels={on:'Є світло',off:'Немає світла',maybe:'Можливе відключення',unknown:'Немає даних'};
+ const time=i=>String(Math.floor(i/2)).padStart(2,'0')+':'+(i%2?'30':'00');
+ function refresh(){
+  chart.querySelectorAll('.chart-boundary').forEach(n=>n.remove());
   const bars=[...chart.querySelectorAll('.bar')];if(bars.length!==48)return;
-  const states=bars.map(el=>el.dataset.state||'unknown');
-  const boundaries=[];
-  for(let i=0;i<=48;i++){
-   const before=i>0?states[i-1]:null,after=i<48?states[i]:null;
-   if((after==='off'&&before!=='off')||(before==='off'&&after!=='off'))boundaries.push(i);
-  }
-  boundaries.forEach(i=>{
-   const h=String(Math.floor(i/2)).padStart(2,'0');const m=i%2?'30':'00';
-   const el=document.createElement('div');el.className='chart-boundary'+(i===0?' edge-left':i===48?' edge-right':'');
-   el.style.left=(i/48*100)+'%';
-   const time=document.createElement('span');time.textContent=h+':'+m;el.append(time);chart.append(el);
+  const states=bars.map(b=>b.dataset.state||'unknown');
+  segments=[];
+  for(let i=0;i<48;){let j=i+1;while(j<48&&states[j]===states[i])j++;segments.push({start:i,end:j,state:states[i]});i=j;}
+  selected=null;popup.hidden=true;
+  // The 48 half-hour slots remain data-driven; each consecutive state is one tappable interval.
+  bars.forEach((bar,i)=>{
+   const seg=segments.find(x=>x.start<=i&&i<x.end);
+   bar.tabIndex=seg.start===i?0:-1;
+   bar.setAttribute('role','button');
+   bar.dataset.segmentStart=String(seg.start);
+   bar.setAttribute('aria-label',`${time(seg.start)}–${time(seg.end)} · ${labels[seg.state]}`);
+  });
+  renderDetails();
+ }
+ function choose(start){
+  const seg=segments.find(s=>s.start===start);if(!seg)return;
+  selected=seg;
+  chart.querySelectorAll('.bar').forEach((b,i)=>b.classList.toggle('timeline-selected',i>=seg.start&&i<seg.end));
+  popup.textContent=`${time(seg.start)}–${time(seg.end)} · ${labels[seg.state]}`;
+  popup.hidden=false;
+  const center=(seg.start+seg.end)/2/48*100;
+  popup.style.left=`clamp(90px, ${center}%, calc(100% - 90px))`;
+  window.svitloPlayUiSound?.('chart');window.svitloHaptic?.('chart');
+ }
+ chart.addEventListener('click',e=>{const bar=e.target.closest('.bar');if(bar)choose(Number(bar.dataset.segmentStart));});
+ chart.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const bar=e.target.closest('.bar');if(bar){e.preventDefault();choose(Number(bar.dataset.segmentStart));}}});
+ document.addEventListener('pointerdown',e=>{if(!schedule.contains(e.target)){popup.hidden=true;chart.querySelectorAll('.timeline-selected').forEach(b=>b.classList.remove('timeline-selected'));}});
+ function renderDetails(){
+  details.replaceChildren();
+  const outages=segments.filter(s=>s.state==='off'||s.state==='maybe');
+  if(!outages.length){const empty=document.createElement('div');empty.className='timeline-empty';empty.textContent=segments.some(s=>s.state==='unknown')?'ДТЕК не надав повного графіка на цей день.':'За графіком відключень немає.';details.append(empty);return;}
+  outages.forEach((seg,n)=>{
+   const item=document.createElement('div');item.className='timeline-detail-item';
+   const badge=document.createElement('span');badge.className='timeline-detail-badge'+(seg.state==='maybe'?' possible':'');badge.textContent=String(n+1).padStart(2,'0');
+   const copy=document.createElement('div');copy.className='timeline-detail-copy';
+   const heading=document.createElement('strong');heading.textContent=`${time(seg.start)} — ${time(seg.end)}`;
+   const sub=document.createElement('small');sub.textContent=labels[seg.state];
+   copy.append(heading,sub);
+   const duration=document.createElement('span');duration.className='timeline-detail-duration';const mins=(seg.end-seg.start)*30;duration.textContent=mins>=60?`${Math.floor(mins/60)} год${mins%60?' '+mins%60+' хв':''}`:`${mins} хв`;
+   item.append(badge,copy,duration);details.append(item);
   });
  }
- window.addEventListener('svitlo:chart-drawn',drawOutageTimes);
- drawOutageTimes();
+ toggle.addEventListener('click',()=>{const open=details.hidden;details.hidden=!open;toggle.setAttribute('aria-expanded',String(open));window.svitloPlayUiSound?.('chart');window.svitloHaptic?.('chart');});
+ window.addEventListener('svitlo:chart-drawn',refresh);
+ refresh();
 })();
 </script>
 <div id="energyGame" hidden role="dialog" aria-modal="true" aria-labelledby="egTitle"><div class="eg-shell"><div class="eg-head"><div><div class="eg-kicker">⚡ СЕКРЕТНИЙ РЕЖИМ</div><h2 id="egTitle">Енергомережа</h2></div><button id="egClose" class="eg-close" type="button" aria-label="Закрити гру">✕</button></div><p class="eg-desc">Поверни дроти так, щоб струм від ⚡ станції дістався до всіх 🏠 будинків. Торкайся плиток, щоб обертати їх.</p><div class="eg-stats"><div class="eg-stat"><strong id="egLevel">1</strong><small>Рівень</small></div><div class="eg-stat"><strong id="egHouses">0/0</strong><small>Будинки зі світлом</small></div><div class="eg-stat"><strong id="egMoves">0</strong><small>Повороти</small></div></div><div class="eg-grid" id="egGrid" aria-label="Ігрове поле"></div><div class="eg-message" id="egMessage" aria-live="polite"></div><div class="eg-bottom"><button type="button" class="eg-action" id="egRestart">↻ Спочатку</button><button type="button" class="eg-action primary" id="egNext" hidden>Далі →</button></div><p class="eg-help">Гра працює без сервера. Рекорд рівня зберігається у цьому браузері.</p></div></div><script>
