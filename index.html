@@ -260,11 +260,17 @@ body.welcome-lock{overflow:hidden}
 .tg-link-banner.visible{display:flex}.tg-link-banner .tg-banner-icon{font-size:24px}.tg-link-banner .tg-banner-copy{flex:1;min-width:0}.tg-link-banner strong{display:block;margin-bottom:3px;color:#ffda78}.tg-link-banner small{display:block;color:#d5cddd;line-height:1.35}.tg-link-banner button{border:0;border-radius:11px;background:#f5c84c;color:#191921;font-size:12px;font-weight:800;padding:10px 9px}.tg-link-banner .tg-banner-close{background:transparent;color:#c5bdce;padding:8px 3px;font-size:20px}
 
 /* DTEK schedule does not guarantee physical electricity availability */
-.dtek-caution{display:flex;gap:11px;align-items:flex-start;margin:14px 0 2px;padding:13px 14px;border:1px solid rgba(245,200,76,.38);border-radius:16px;background:linear-gradient(130deg,rgba(245,200,76,.13),rgba(245,200,76,.045));color:var(--text,#fff)}
+/* Compact, accessible expandable DTEK warning */
+.dtek-caution{display:block;margin:14px 0 2px;border:1px solid rgba(245,200,76,.38);border-radius:16px;background:linear-gradient(130deg,rgba(245,200,76,.12),rgba(245,200,76,.035));color:var(--text,#fff);overflow:hidden}
 .dtek-caution[hidden]{display:none!important}
-.dtek-caution-icon{font-size:19px;line-height:1.2}
-.dtek-caution strong{display:block;font-size:13px;line-height:1.4;color:#f5c84c;margin-bottom:5px}
-.dtek-caution small{display:block;font-size:12px;line-height:1.5;color:var(--muted,#c5c5cf)}
+.dtek-caution summary{display:flex;align-items:center;gap:9px;min-height:42px;padding:9px 12px;cursor:pointer;list-style:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.dtek-caution summary::-webkit-details-marker{display:none}
+.dtek-caution summary:focus-visible{outline:2px solid #f5c84c;outline-offset:-3px;border-radius:14px}
+.dtek-caution-icon{font-size:16px;line-height:1;flex:none}
+.dtek-caution strong{flex:1;font-size:12px;line-height:1.35;color:#f5c84c}
+.dtek-caution-chevron{font-size:16px;color:#f5c84c;transition:transform .2s ease;flex:none}
+.dtek-caution[open] .dtek-caution-chevron{transform:rotate(180deg)}
+.dtek-caution-body{padding:0 13px 13px 36px;font-size:12px;line-height:1.55;color:var(--muted,#c5c5cf)}
 
 /* DTEK loading state: hide provisional schedule data until the request finishes */
 .hero{position:relative;isolation:isolate}
@@ -939,15 +945,17 @@ renderHome=function(){oldRenderHome();const a=active();if(!a){showDtekHeroLoadin
  const powerIcon=hero.querySelector('.power');
  const emergency=data.emergency?.active===true;
  let caution=hero.querySelector('.dtek-caution');
- if(!caution){
-  caution=document.createElement('div');
+ if(!caution || caution.tagName!=='DETAILS'){
+  const oldCaution=caution;
+  caution=document.createElement('details');
   caution.className='dtek-caution';
-  caution.setAttribute('role','note');
-  hero.querySelector('.live').insertAdjacentElement('afterend',caution);
+  caution.innerHTML='<summary><span class="dtek-caution-icon" aria-hidden="true">⚠️</span><strong>Увага: світла може не бути</strong><span class="dtek-caution-chevron" aria-hidden="true">⌄</span></summary><div class="dtek-caution-body">Навіть якщо за графіком ДТЕК електропостачання має бути, можливі аварійні або екстрені відключення. Графік не підтверджує фактичну наявність світла. Перевірте оновлення ДТЕК.</div>';
+  if(oldCaution)oldCaution.replaceWith(caution);
+  else hero.querySelector('.live').insertAdjacentElement('afterend',caution);
  }
  const showCaution=!data.error&&!emergency&&(state==='on'||state==='maybe');
  caution.hidden=!showCaution;
- if(showCaution)caution.innerHTML='<span class="dtek-caution-icon" aria-hidden="true">⚠️</span><span><strong>Увага: світла може не бути</strong><small>Навіть якщо за графіком ДТЕК електропостачання має бути, можливі аварійні або екстрені відключення. Графік не підтверджує фактичну наявність світла. Перевірте оновлення ДТЕК.</small></span>';
+ if(!showCaution)caution.open=false;
  hero.classList.toggle('hero-emergency',emergency);
  if(powerIcon){
    powerIcon.innerHTML=icon(emergency?'triangle-alert':'power');
