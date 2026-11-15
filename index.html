@@ -674,25 +674,41 @@ async function checkLink(){
   const r=await fetch(API+'/api/link/status',{headers:auth()});
   if(!r.ok)throw Error('HTTP '+r.status);
   const d=await r.json();
-  if(d.linked){publishLinkState('linked');status('Підключено ✓');button.textContent='Перепідключити Telegram';await sync();return true;}
+  if(d.linked){publishLinkState('linked');status('Підключено ✓');button.textContent='Перепідключити Telegram';if(workspaceReady)await sync();return true;}
   publishLinkState('unlinked');status('Telegram не прив’язано — підключіть знову');return false;
  }catch(e){publishLinkState('unknown');status('Помилка зв’язку з сервером');return false;}
 }
+// Serialize subscription writes: an older response must never overwrite a newer switch.
+let subscriptionRevision=0,subscriptionApplied=0,subscriptionWorker=null;
 async function sync(){
- if(!token())return false;
- let s;try{s=JSON.parse(localStorage.getItem('svitlo_workspace_v2')||'{}')}catch{return false}
- const addresses=(s.addresses||[]).filter(a=>a.city&&a.street&&a.house).map(a=>({
-  id:a.id,city:a.city,street:a.street,house:a.house,
-  enabled:a.notificationsEnabled!==false,
-  reminderMinutes:s.reminderMinutes??0,notifyOn:s.notifications===true,
-  notifySchedule:s.scheduleNotifications===true,quietHours:s.quietHours===true
- }));
- try{
-  const r=await fetch(API+'/api/link/sync',{method:'POST',headers:{...auth(),'Content-Type':'application/json'},body:JSON.stringify({addresses})});
-  if(!r.ok){const body=await r.json().catch(()=>({}));throw Error(body.error||'HTTP '+r.status);}
-  return true;
- }catch(e){status('Не вдалося синхронізувати адреси');return false;}
+ subscriptionRevision++;
+ if(subscriptionWorker)return subscriptionWorker;
+ subscriptionWorker=(async()=>{
+  let ok=true;
+  while(subscriptionApplied<subscriptionRevision){
+   const revision=subscriptionRevision;
+   if(!token()||window.svitloTelegramLinkState!=='linked'){ok=false;break;}
+   const s=window.svitloGetWorkspace?.();
+   if(!s){ok=false;break;}
+   const addresses=(s.addresses||[]).filter(a=>a.city&&a.street&&a.house).map(a=>({
+    id:a.id,city:a.city,street:a.street,house:a.house,
+    enabled:a.notificationsEnabled!==false,
+    reminderMinutes:[0,15,30,60].includes(s.reminderMinutes)?s.reminderMinutes:30,
+    notifyOn:s.notifications===true,
+    notifySchedule:s.scheduleNotifications!==false,
+    quietHours:s.quietHours===true
+   }));
+   try{
+    const r=await fetch(API+'/api/link/sync',{method:'POST',headers:{...auth(),'Content-Type':'application/json'},body:JSON.stringify({addresses}),cache:'no-store'});
+    if(!r.ok)throw Error('HTTP '+r.status);
+    subscriptionApplied=revision;
+   }catch(e){console.warn('Світло UA: notification settings sync failed',e);status('Не вдалося зберегти сповіщення на сервері');ok=false;break;}
+  }
+  return ok;
+ })();
+ try{return await subscriptionWorker}finally{subscriptionWorker=null;}
 }
+
 button.addEventListener('click',async()=>{
  try{
   status('Створюємо посилання…');
@@ -768,7 +784,7 @@ window.addEventListener('focus',()=>{if(workspaceReady&&!workspaceBusy)pullWorks
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&workspaceReady&&!workspaceBusy)pullWorkspace(false)});
 // Updates address list/preferences on the server after local changes.
 window.addEventListener('storage',e=>{if(e.key==='svitlo_workspace_v2')sync()});
-window.addEventListener('svitlo:workspace-updated',()=>{sync()});
+window.addEventListener('svitlo:workspace-updated',()=>{if(!workspaceReady&&window.svitloTelegramLinkState==='linked')sync()});
 checkLink();
 })();
 </script>
